@@ -95,7 +95,7 @@ main { padding-block: 6px 120px; }
 @media (min-width: 620px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .card { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .ph { position: relative; aspect-ratio: 1 / 1; max-width: 100%; border-radius: var(--radius); background: var(--tile); overflow: hidden; display: grid; place-items: center; }
-.ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .mono { font-size: 64px; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
 .unitbadge { position: absolute; left: 8px; bottom: 8px; background: var(--surface); color: var(--fg); border-radius: 999px; padding: 3px 9px; font-size: 12px; font-weight: 600; }
 .name { font-size: 15px; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.7em; }
@@ -203,12 +203,29 @@ main { padding-block: 6px 120px; }
 </section>
 <div class="toast" id="toast" hidden></div>
 
-<script id="data" type="application/json">{"shop": {"name": "Фрукты ягоды", "min_order": 1500, "delivery_fee": 200, "free_from": 3000, "first_order_discount": 0.1}, "sections": ["Овощи", "Яблоки и груши", "Цитрусовые", "Хурма, гранат, киви", "Виноград", "Восточные сладости", "Чай"], "items": [{"code": "tomato_cherry", "title": "Помидор черри", "desc": "", "price": 450, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "tomato_plum", "title": "Помидор сливка", "desc": "", "price": 250, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "tomato_pink", "title": "Помидор розовый Азербайджан", "desc": "", "price": 350, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "cucumber", "title": "Огурцы Леро", "desc": "", "price": 480, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "zucchini", "title": "Кабачок", "desc": "", "price": 220, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "eggplant", "title": "Баклажан", "desc": "", "price": 220, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "pepper_red", "title": "Перец красный", "desc": "", "price": 365, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "pepper_green", "title": "Перец зелёный", "desc": "", "price": 150, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "pepper_hot", "title": "Перец капи острый", "desc": "", "price": 425, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "ginger", "title": "Имбирь", "desc": "", "price": 700, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "apple_vengerka", "title": "Яблоко Венгерка", "desc": "", "price": 150, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_gala", "title": "Яблоко Гала", "desc": "", "price": 150, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_simirenko", "title": "Яблоко Симеринка", "desc": "", "price": 150, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_idared", "title": "Яблоко Айдарэд", "desc": "", "price": 155, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_grushovka", "title": "Яблоко Грушовка", "desc": "", "price": 165, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_granny", "title": "Яблоко Гренни Смит", "desc": "", "price": 165, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_champion", "title": "Яблоко Чемпион", "desc": "", "price": 175, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_banana", "title": "Яблоко банановое", "desc": "", "price": 250, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "pear_conference", "title": "Груша Конференция", "desc": "", "price": 450, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "quince", "title": "Айва", "desc": "", "price": 300, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "mandarin_leaves", "title": "Мандарин с листьями", "desc": "", "price": 255, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "mandarin_abkhazia", "title": "Мандарин Абхазия", "desc": "", "price": 300, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "mandarin_baby", "title": "Мандарин Бейби", "desc": "", "price": 315, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "mandarin_peru", "title": "Мандарин Перу", "desc": "", "price": 350, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "orange", "title": "Апельсин", "desc": "", "price": 250, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "orange_morocco", "title": "Апельсин Марокко", "desc": "", "price": 300, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "grapefruit", "title": "Грейпфрут", "desc": "", "price": 295, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "lemon_turkey", "title": "Лимон Турция", "desc": "", "price": 350, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "lemon_uzbek", "title": "Лимон Узбекистан", "desc": "", "price": 750, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "persimmon_romashka", "title": "Хурма Ромашка", "desc": "", "price": 195, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "persimmon_korolek", "title": "Хурма Королёк", "desc": "", "price": 195, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "persimmon_honey", "title": "Хурма медовая", "desc": "", "price": 245, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "pomegranate_az", "title": "Гранат Азербайджан", "desc": "", "price": 350, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "pomegranate_peru", "title": "Гранат Перу", "desc": "", "price": 380, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "pomegranate_seedless", "title": "Гранат без косточек", "desc": "", "price": 520, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "kiwi_iran", "title": "Киви Иран", "desc": "", "price": 185, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "kiwi_peru", "title": "Киви Перу", "desc": "", "price": 270, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "feijoa", "title": "Фейхоа", "desc": "", "price": 370, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "mango_egypt", "title": "Манго Египет", "desc": "Цена за 1 шт", "price": 250, "unit": "шт", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "plum_iran", "title": "Слива Иран", "desc": "", "price": 275, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "plum_prune", "title": "Чернослив", "desc": "", "price": 395, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "grape_taifi", "title": "Тайфи", "desc": "Виноград", "price": 235, "unit": "кг", "section": "Виноград", "photo": ""}, {"code": "grape_lidia", "title": "Виноград Лидия", "desc": "", "price": 250, "unit": "кг", "section": "Виноград", "photo": ""}, {"code": "grape_kishmish_black", "title": "Киш-миш", "desc": "Виноград тёмный", "price": 350, "unit": "кг", "section": "Виноград", "photo": ""}, {"code": "grape_ladyfinger", "title": "Виноград Дамские пальчики", "desc": "", "price": 350, "unit": "кг", "section": "Виноград", "photo": ""}, {"code": "grape_kishmish_pink", "title": "Киш-миш розовый", "desc": "Виноград", "price": 355, "unit": "кг", "section": "Виноград", "photo": ""}, {"code": "grape_kishmish_white", "title": "Виноград Киш-миш", "desc": "", "price": 420, "unit": "кг", "section": "Виноград", "photo": ""}, {"code": "baklava", "title": "Пахлава домашняя", "desc": "200 ₽ за 100 г", "price": 2000, "unit": "кг", "section": "Восточные сладости", "photo": ""}, {"code": "halva", "title": "Халва", "desc": "", "price": 600, "unit": "кг", "section": "Восточные сладости", "photo": ""}, {"code": "halva_pashmak", "title": "Халва Пашмак", "desc": "Цена за 1 шт", "price": 300, "unit": "шт", "section": "Восточные сладости", "photo": ""}, {"code": "kadaif", "title": "Кадаиф", "desc": "Цена за 1 шт", "price": 600, "unit": "шт", "section": "Восточные сладости", "photo": ""}, {"code": "dubai_dessert", "title": "Дубайский десерт", "desc": "Цена за 1 шт", "price": 300, "unit": "шт", "section": "Восточные сладости", "photo": ""}, {"code": "tea_aroma", "title": "Азерчай с ароматом", "desc": "Цена за упаковку", "price": 250, "unit": "шт", "section": "Чай", "photo": ""}, {"code": "tea_green_garden", "title": "Азерчай Зелёный сад", "desc": "Цена за упаковку", "price": 105, "unit": "шт", "section": "Чай", "photo": ""}]}</script>
+<script id="data" type="application/json">{"shop": {"name": "Фрукты ягоды", "min_order": 1500, "delivery_fee": 200, "free_from": 3000, "first_order_discount": 0.1}, "catalog_url": "https://docs.google.com/spreadsheets/d/1em0O1--v0GNlda7v4JgPxkIgELoqBs1iBTFIYPEu1YQ/gviz/tq?tqx=out:csv&headers=1&sheet=%D0%92%D0%B8%D1%82%D1%80%D0%B8%D0%BD%D0%B0", "sections": ["Овощи", "Яблоки и груши", "Цитрусовые", "Хурма, гранат, киви", "Виноград", "Восточные сладости", "Чай"], "items": [{"code": "tomato_cherry", "title": "Помидор черри", "desc": "", "price": 450, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "tomato_plum", "title": "Помидор сливка", "desc": "", "price": 250, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "tomato_pink", "title": "Помидор розовый Азербайджан", "desc": "", "price": 350, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "cucumber", "title": "Огурцы Леро", "desc": "", "price": 480, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "zucchini", "title": "Кабачок", "desc": "", "price": 220, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "eggplant", "title": "Баклажан", "desc": "", "price": 220, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "pepper_red", "title": "Перец красный", "desc": "", "price": 365, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "pepper_green", "title": "Перец зелёный", "desc": "", "price": 150, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "pepper_hot", "title": "Перец капи острый", "desc": "", "price": 425, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "ginger", "title": "Имбирь", "desc": "", "price": 700, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "apple_vengerka", "title": "Яблоко Венгерка", "desc": "", "price": 150, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_gala", "title": "Яблоко Гала", "desc": "", "price": 150, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_simirenko", "title": "Яблоко Симеринка", "desc": "", "price": 150, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_idared", "title": "Яблоко Айдарэд", "desc": "", "price": 155, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_grushovka", "title": "Яблоко Грушовка", "desc": "", "price": 165, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_granny", "title": "Яблоко Гренни Смит", "desc": "", "price": 165, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_champion", "title": "Яблоко Чемпион", "desc": "", "price": 175, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_banana", "title": "Яблоко банановое", "desc": "", "price": 250, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "pear_conference", "title": "Груша Конференция", "desc": "", "price": 450, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "quince", "title": "Айва", "desc": "", "price": 300, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "mandarin_leaves", "title": "Мандарин с листьями", "desc": "", "price": 255, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "mandarin_abkhazia", "title": "Мандарин Абхазия", "desc": "", "price": 300, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "mandarin_baby", "title": "Мандарин Бейби", "desc": "", "price": 315, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "mandarin_peru", "title": "Мандарин Перу", "desc": "", "price": 350, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "orange", "title": "Апельсин", "desc": "", "price": 250, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "orange_morocco", "title": "Апельсин Марокко", "desc": "", "price": 300, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "grapefruit", "title": "Грейпфрут", "desc": "", "price": 295, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "lemon_turkey", "title": "Лимон Турция", "desc": "", "price": 350, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "lemon_uzbek", "title": "Лимон Узбекистан", "desc": "", "price": 750, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "persimmon_romashka", "title": "Хурма Ромашка", "desc": "", "price": 195, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "persimmon_korolek", "title": "Хурма Королёк", "desc": "", "price": 195, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "persimmon_honey", "title": "Хурма медовая", "desc": "", "price": 245, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "pomegranate_az", "title": "Гранат Азербайджан", "desc": "", "price": 350, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "pomegranate_peru", "title": "Гранат Перу", "desc": "", "price": 380, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "pomegranate_seedless", "title": "Гранат без косточек", "desc": "", "price": 520, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "kiwi_iran", "title": "Киви Иран", "desc": "", "price": 185, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "kiwi_peru", "title": "Киви Перу", "desc": "", "price": 270, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "feijoa", "title": "Фейхоа", "desc": "", "price": 370, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "mango_egypt", "title": "Манго Египет", "desc": "Цена за 1 шт", "price": 250, "unit": "шт", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "plum_iran", "title": "Слива Иран", "desc": "", "price": 275, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "plum_prune", "title": "Чернослив", "desc": "", "price": 395, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "grape_taifi", "title": "Тайфи", "desc": "Виноград", "price": 235, "unit": "кг", "section": "Виноград", "photo": ""}, {"code": "grape_lidia", "title": "Виноград Лидия", "desc": "", "price": 250, "unit": "кг", "section": "Виноград", "photo": ""}, {"code": "grape_kishmish_black", "title": "Киш-миш", "desc": "Виноград тёмный", "price": 350, "unit": "кг", "section": "Виноград", "photo": ""}, {"code": "grape_ladyfinger", "title": "Виноград Дамские пальчики", "desc": "", "price": 350, "unit": "кг", "section": "Виноград", "photo": ""}, {"code": "grape_kishmish_pink", "title": "Киш-миш розовый", "desc": "Виноград", "price": 355, "unit": "кг", "section": "Виноград", "photo": ""}, {"code": "grape_kishmish_white", "title": "Виноград Киш-миш", "desc": "", "price": 420, "unit": "кг", "section": "Виноград", "photo": ""}, {"code": "baklava", "title": "Пахлава домашняя", "desc": "200 ₽ за 100 г", "price": 2000, "unit": "кг", "section": "Восточные сладости", "photo": ""}, {"code": "halva", "title": "Халва", "desc": "", "price": 600, "unit": "кг", "section": "Восточные сладости", "photo": ""}, {"code": "halva_pashmak", "title": "Халва Пашмак", "desc": "Цена за 1 шт", "price": 300, "unit": "шт", "section": "Восточные сладости", "photo": ""}, {"code": "kadaif", "title": "Кадаиф", "desc": "Цена за 1 шт", "price": 600, "unit": "шт", "section": "Восточные сладости", "photo": ""}, {"code": "dubai_dessert", "title": "Дубайский десерт", "desc": "Цена за 1 шт", "price": 300, "unit": "шт", "section": "Восточные сладости", "photo": ""}, {"code": "tea_aroma", "title": "Азерчай с ароматом", "desc": "Цена за упаковку", "price": 250, "unit": "шт", "section": "Чай", "photo": ""}, {"code": "tea_green_garden", "title": "Азерчай Зелёный сад", "desc": "Цена за упаковку", "price": 105, "unit": "шт", "section": "Чай", "photo": ""}]}</script>
 <script>
 (() => {
   const DATA = JSON.parse(document.getElementById("data").textContent);
-  const S = DATA.shop, ITEMS = DATA.items, SECTIONS = DATA.sections;
-  const byCode = Object.fromEntries(ITEMS.map(p => [p.code, p]));
+  const S = DATA.shop;
+  // фото, которые лежат рядом со страницей (собраны build.py), и товары, известные на момент сборки
+  const PHOTOS = Object.fromEntries(DATA.items.filter(p => p.photo).map(p => [p.code, p.photo]));
+  const BUILT = new Set(DATA.items.map(p => p.code));
+  let ITEMS = [], SECTIONS = [], byCode = {};
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  function applyItems(items) {
+    ITEMS = items.map(p => ({ ...p,
+      // фото: ссылка из таблицы → файл рядом со страницей → для нового товара пробуем photos/<код>.jpg
+      photo: /^https?:\/\//.test(p.photo || "") ? p.photo : PHOTOS[p.code] || (BUILT.has(p.code) ? "" : `photos/${p.code}.jpg`) }));
+    SECTIONS = [...new Set(ITEMS.map(p => p.section))];
+    byCode = Object.fromEntries(ITEMS.map(p => [p.code, p]));
+  }
+  applyItems(DATA.items);
+  // последние цены из таблицы с прошлого открытия — свежее, чем зашитые в страницу
+  try {
+    const saved = JSON.parse(localStorage.getItem("catalog") || "null");
+    if (saved && saved.url === DATA.catalog_url && Array.isArray(saved.items) && saved.items.length) applyItems(saved.items);
+  } catch (e) {}
   // Telegram передаёт данные запуска в адресе страницы, поэтому «мы внутри Telegram» видно и без его скрипта
   const launchedFromTelegram = /tgWebApp/.test(location.hash) || window.TelegramWebviewProxy !== undefined;
   let tg = null;
@@ -283,21 +300,20 @@ main { padding-block: 6px 120px; }
   }
 
   // ---------- карточки ----------
-  const secIndex = Object.fromEntries(SECTIONS.map((s, i) => [s, i % 7]));
   function photo(p, cls = "") {
-    const i = secIndex[p.section] ?? 0;
-    const inner = p.photo
-      ? `<img src="${p.photo}" alt="" loading="lazy">`
-      : `<span class="mono" style="color:var(--s${i}i)">${p.title.trim()[0]}</span>`;
+    const i = Math.max(0, SECTIONS.indexOf(p.section)) % 7;
+    // буква лежит под фото: если фото не загрузится, его просто убираем
+    const inner = `<span class="mono" style="color:var(--s${i}i)">${esc(p.title.trim()[0] || "•")}</span>` +
+      (p.photo ? `<img src="${esc(p.photo)}" alt="" loading="lazy" onerror="this.remove()">` : "");
     return `<div class="ph ${cls}" style="background:var(--s${i})">${inner}${cls ? "" : `<span class="unitbadge">${byWeight(p) ? "за 1 кг" : p.desc && /упак/.test(p.desc) ? "за упаковку" : "за 1 шт"}</span>`}</div>`;
   }
   function buyHTML(p) {
     const q = cart[p.code];
-    if (!q) return `<button class="add" type="button" data-inc="${p.code}" aria-label="Добавить ${p.title}">${rub(p.price)}${byWeight(p) ? "<small>/кг</small>" : ""}<span class="plus">+</span></button>`;
+    if (!q) return `<button class="add" type="button" data-inc="${p.code}" aria-label="Добавить ${esc(p.title)}">${rub(p.price)}${byWeight(p) ? "<small>/кг</small>" : ""}<span class="plus">+</span></button>`;
     return `<div class="step"><button type="button" data-dec="${p.code}" aria-label="Меньше">−</button><button class="q" type="button" data-qty="${p.code}" aria-label="Указать количество">${fmtQty(p, q)}</button><button type="button" data-inc="${p.code}" aria-label="Больше">+</button></div>`;
   }
   const shortDesc = p => (p.desc && !/^Цена за/.test(p.desc)) ? p.desc : "";
-  const card = p => `<article class="card" data-card="${p.code}">${photo(p)}<div class="name">${p.title}</div>${shortDesc(p) ? `<div class="desc">${shortDesc(p)}</div>` : ""}<div class="buy" data-buy="${p.code}">${buyHTML(p)}</div></article>`;
+  const card = p => `<article class="card" data-card="${p.code}">${photo(p)}<div class="name">${esc(p.title)}</div>${shortDesc(p) ? `<div class="desc">${esc(shortDesc(p))}</div>` : ""}<div class="buy" data-buy="${p.code}">${buyHTML(p)}</div></article>`;
 
   let query = "";
   function renderList() {
@@ -311,12 +327,12 @@ main { padding-block: 6px 120px; }
     }
     list.innerHTML = SECTIONS.map((s, i) => {
       const ps = ITEMS.filter(p => p.section === s);
-      return `<section class="section" id="sec${i}"><h2>${s}</h2><div class="grid">${ps.map(card).join("")}</div></section>`;
+      return `<section class="section" id="sec${i}"><h2>${esc(s)}</h2><div class="grid">${ps.map(card).join("")}</div></section>`;
     }).join("");
     if (io) list.querySelectorAll(".section[id]").forEach(el => io.observe(el));
   }
   function renderChips() {
-    $("chips").innerHTML = SECTIONS.map((s, i) => `<button class="chip" type="button" data-sec="${i}" aria-pressed="false">${s}</button>`).join("");
+    $("chips").innerHTML = SECTIONS.map((s, i) => `<button class="chip" type="button" data-sec="${i}" aria-pressed="false">${esc(s)}</button>`).join("");
   }
   function refresh(code) {
     if (code) document.querySelectorAll(`[data-buy="${code}"]`).forEach(el => el.innerHTML = buyHTML(byCode[code]));
@@ -355,7 +371,7 @@ main { padding-block: 6px 120px; }
     if (!codes.length) { hideSheets(); return; }
     $("lines").innerHTML = codes.map(c => {
       const p = byCode[c], q = cart[c];
-      return `<div class="line">${photo(p, "mini")}<div><div class="t">${p.title}</div><div class="p">${priceText(p)} · ≈ ${rub(p.price * q)}</div></div><div data-buy="${c}">${buyHTML(p)}</div></div>`;
+      return `<div class="line">${photo(p, "mini")}<div><div class="t">${esc(p.title)}</div><div class="p">${priceText(p)} · ≈ ${rub(p.price * q)}</div></div><div data-buy="${c}">${buyHTML(p)}</div></div>`;
     }).join("");
     const t = total(), h = hint(t), first = S.first_order_discount;
     $("sum").innerHTML =
@@ -439,9 +455,63 @@ main { padding-block: 6px 120px; }
     }
   }, { rootMargin: "-150px 0px -60% 0px" }) : null;
 
+  // ---------- свежие цены из Google Таблицы (в фоне, страница уже показана) ----------
+  function parseCSV(text) {
+    const first = text.split("\n", 1)[0];
+    const d = (first.match(/;/g) || []).length > (first.match(/,/g) || []).length ? ";" : ",";
+    const rows = []; let row = [], f = "", q = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (q) { if (c === '"') { if (text[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+      else if (c === '"') q = true;
+      else if (c === d) { row.push(f); f = ""; }
+      else if (c === "\n") { row.push(f.replace(/\r$/, "")); rows.push(row); row = []; f = ""; }
+      else f += c;
+    }
+    if (f || row.length) { row.push(f); rows.push(row); }
+    return rows;
+  }
+  const YES = new Set(["да", "есть", "+", "1", "yes", "true", "✓", "✅"]);
+  function rowsToItems(rows) {
+    if (!rows.length) return [];
+    const head = rows[0].map(h => h.trim().replace(/^\ufeff/, ""));
+    const col = name => head.indexOf(name);
+    const cell = (r, name) => (col(name) >= 0 && r[col(name)] !== undefined ? String(r[col(name)]).trim() : "");
+    const out = [];
+    for (const r of rows.slice(1)) {
+      const code = cell(r, "Код"), title = cell(r, "Товар"), digits = cell(r, "Цена").replace(/\D/g, "");
+      if (!code || !title || !digits || !YES.has(cell(r, "Есть").toLowerCase())) continue;
+      out.push({ code, title, desc: cell(r, "Описание"), price: +digits,
+        unit: cell(r, "Единица").toLowerCase().startsWith("шт") ? "шт" : "кг",
+        section: cell(r, "Раздел") || "Другое", photo: cell(r, "Фото"),
+        order: /^\d+$/.test(cell(r, "Порядок")) ? +cell(r, "Порядок") : 999 });
+    }
+    return out.sort((a, b) => a.order - b.order || a.title.localeCompare(b.title, "ru"));
+  }
+  async function loadSheet() {
+    if (!DATA.catalog_url || !window.fetch) return;
+    const ctrl = "AbortController" in window ? new AbortController() : null;
+    const timer = setTimeout(() => ctrl && ctrl.abort(), 10000);
+    try {
+      const res = await fetch(DATA.catalog_url, { signal: ctrl && ctrl.signal, cache: "no-store" });
+      const text = await res.text();
+      if (!res.ok || text.trimStart().startsWith("<")) return;
+      const items = rowsToItems(parseCSV(text));
+      if (!items.length) return;   // пустая или чужая таблица — оставляем то, что есть
+      applyItems(items);
+      try { localStorage.setItem("catalog", JSON.stringify({ url: DATA.catalog_url, items })); } catch (e) {}
+      for (const c of Object.keys(cart)) if (!byCode[c]) delete cart[c];
+      save(); renderChips(); renderList(); renderBar();
+      if (!$("cart").hidden) renderCart();
+    } catch (e) {
+      // нет сети или Google недоступен — работаем с последними известными ценами
+    } finally { clearTimeout(timer); }
+  }
+
   $("shop").textContent = S.name;
   $("zone").textContent = "Доставка по ЖК";
   renderChips(); renderList(); renderBar();
+  loadSheet();
   window.__tgReady = initTg;
   initTg();
 })();
