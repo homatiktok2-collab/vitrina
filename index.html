@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<title>Витрина «Фрукты ягоды»</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap">
+<style>
+/* Магазинная витрина: липкая шапка с поиском и разделами, сетка карточек 2 колонки, корзина внизу экрана */
+:root {
+  --bg: #fbfcf8;
+  --surface: #ffffff;
+  --tile: #f0f3ea;
+  --fg: #1c2018;
+  --muted: #6c7366;
+  --line: #e4e8dd;
+  --accent: #ef6a1f;
+  --accent-ink: #ffffff;
+  --accent-soft: #fde9dc;
+  --good: #2f8a3e;
+  --shadow: 0 6px 24px rgba(40, 48, 30, .14);
+  /* оттенки плашек по разделам: фон / буква */
+  --s0: #e3f1dc; --s0i: #3f7d32;
+  --s1: #fbe1dc; --s1i: #b8382a;
+  --s2: #fde8cf; --s2i: #c25d0c;
+  --s3: #fbe6c9; --s3i: #a8580b;
+  --s4: #ece2f5; --s4i: #6b3f95;
+  --s5: #f6ead2; --s5i: #8a5d17;
+  --s6: #dcefe9; --s6i: #2d7564;
+  --font: "Onest", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --radius: 18px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121510; --surface: #1b1f18; --tile: #232820; --fg: #eef1e9; --muted: #9aa292; --line: #2c3228;
+    --accent: #ff8a42; --accent-ink: #1a0d04; --accent-soft: #3a2416; --good: #6cc77a;
+    --shadow: 0 6px 24px rgba(0, 0, 0, .45);
+    --s0: #24331f; --s0i: #9ad387; --s1: #3a2420; --s1i: #f19a8d; --s2: #3a2b1a; --s2i: #f5b06d;
+    --s3: #382c19; --s3i: #eab56a; --s4: #2f2638; --s4i: #c9a3ea; --s5: #342c1d; --s5i: #e2bf7c;
+    --s6: #1f322d; --s6i: #8fd3bf;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121510; --surface: #1b1f18; --tile: #232820; --fg: #eef1e9; --muted: #9aa292; --line: #2c3228;
+  --accent: #ff8a42; --accent-ink: #1a0d04; --accent-soft: #3a2416; --good: #6cc77a;
+  --shadow: 0 6px 24px rgba(0, 0, 0, .45);
+  --s0: #24331f; --s0i: #9ad387; --s1: #3a2420; --s1i: #f19a8d; --s2: #3a2b1a; --s2i: #f5b06d;
+  --s3: #382c19; --s3i: #eab56a; --s4: #2f2638; --s4i: #c9a3ea; --s5: #342c1d; --s5i: #e2bf7c;
+  --s6: #1f322d; --s6i: #8fd3bf;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 15px; line-height: 1.35;
+  -webkit-tap-highlight-color: transparent;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); max-width: 860px; margin: 0 auto; }
+
+/* шапка */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 12px 8px; }
+.brand { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.brand b { font-size: 20px; font-weight: 800; letter-spacing: -.01em; }
+.brand span { color: var(--muted); font-size: 13px; text-align: right; }
+.search { position: relative; }
+.search input {
+  width: 100%; height: 46px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface);
+  padding: 0 44px 0 42px; font-size: 16px; outline: none;
+}
+.search input:focus { border-color: var(--accent); }
+.search svg { position: absolute; left: 13px; top: 13px; width: 20px; height: 20px; color: var(--muted); }
+.search .clear { position: absolute; right: 6px; top: 6px; width: 34px; height: 34px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); font-size: 20px; }
+.chips { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 2px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 7px 14px; font-size: 14px; font-weight: 500; white-space: nowrap; }
+.chip[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+/* витрина */
+main { padding-block: 6px 120px; }
+.section h2 { font-size: 22px; font-weight: 800; letter-spacing: -.01em; margin: 18px 0 12px; text-wrap: balance; scroll-margin-top: 140px; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 12px; }
+@media (min-width: 620px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.card { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.ph { position: relative; aspect-ratio: 1 / 1; max-width: 100%; border-radius: var(--radius); background: var(--tile); overflow: hidden; display: grid; place-items: center; }
+.ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mono { font-size: 64px; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
+.unitbadge { position: absolute; left: 8px; bottom: 8px; background: var(--surface); color: var(--fg); border-radius: 999px; padding: 3px 9px; font-size: 12px; font-weight: 600; }
+.name { font-size: 15px; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.7em; }
+.desc { color: var(--muted); font-size: 13px; margin-top: -4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.buy { display: flex; align-items: center; min-height: 40px; margin-top: auto; }
+.add { display: inline-flex; align-items: center; gap: 10px; border: 0; border-radius: 999px; background: var(--accent-soft); padding: 8px 12px 8px 14px; font-weight: 700; font-size: 16px; font-variant-numeric: tabular-nums; }
+.add .plus { color: var(--accent); font-size: 22px; line-height: 18px; font-weight: 600; }
+.add small { font-weight: 500; color: var(--muted); font-size: 13px; }
+.step { display: inline-flex; align-items: center; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-weight: 700; font-variant-numeric: tabular-nums; }
+.step button { width: 40px; height: 40px; border: 0; background: transparent; color: inherit; font-size: 22px; font-weight: 600; border-radius: 999px; }
+.step .q { min-width: 64px; height: 40px; border: 0; background: transparent; color: inherit; font-size: 15px; font-weight: 700; padding: 0 2px; }
+.empty { text-align: center; color: var(--muted); padding: 48px 8px; }
+.empty b { display: block; color: var(--fg); font-size: 17px; margin-bottom: 6px; }
+
+/* нижняя панель корзины */
+.bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); padding-top: 10px; background: linear-gradient(to top, var(--bg) 70%, transparent); }
+.bar .wrap { display: block; }
+.barbtn { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 0; border-radius: 16px; background: var(--accent); color: var(--accent-ink); padding: 12px 16px; box-shadow: var(--shadow); text-align: left; }
+.barbtn b { font-size: 17px; font-variant-numeric: tabular-nums; }
+.barbtn span { font-size: 13px; opacity: .9; display: block; }
+.barbtn .go { font-weight: 700; font-size: 16px; white-space: nowrap; }
+
+/* шторка корзины и ввод количества */
+.veil { position: fixed; inset: 0; z-index: 20; background: rgba(10, 12, 8, .45); }
+.sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 21; background: var(--surface); border-radius: 22px 22px 0 0; max-height: 86vh; display: flex; flex-direction: column; box-shadow: var(--shadow); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.sheet .wrap { width: 100%; min-width: 0; }
+.sheet header { display: flex; align-items: center; justify-content: space-between; padding-block: 16px 8px; }
+.sheet header h3 { margin: 0; font-size: 20px; font-weight: 800; }
+.x { border: 0; background: var(--tile); width: 34px; height: 34px; border-radius: 999px; font-size: 18px; }
+.lines { overflow-y: auto; padding-block: 4px; }
+.line { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.line .ph { border-radius: 12px; }
+.line .mono { font-size: 22px; }
+.line .t { font-weight: 500; }
+.line .p { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.line .step button { width: 34px; height: 34px; font-size: 19px; }
+.line .step .q { min-width: 54px; height: 34px; font-size: 14px; }
+.sum { padding-block: 12px; display: grid; gap: 6px; font-variant-numeric: tabular-nums; }
+.sum div { display: flex; justify-content: space-between; gap: 12px; }
+.sum .tot { font-size: 18px; font-weight: 800; }
+.note { color: var(--muted); font-size: 13px; }
+.note.warn { color: var(--accent); font-weight: 600; }
+.cta { width: 100%; height: 52px; border: 0; border-radius: 16px; background: var(--accent); color: var(--accent-ink); font-size: 17px; font-weight: 700; margin-block: 4px 14px; }
+.cta[disabled] { opacity: .45; cursor: default; }
+.link { border: 0; background: transparent; color: var(--muted); text-decoration: underline; padding: 0; font-size: 14px; }
+.qtybox { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; padding-block: 4px 16px; }
+.qtybox .row { display: flex; gap: 10px; align-items: center; }
+.qtybox input { flex: 1; min-width: 0; height: 52px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg); padding: 0 14px; font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.qtybox .u { font-size: 18px; color: var(--muted); }
+.quick { display: flex; gap: 8px; flex-wrap: wrap; }
+.quick button { border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 8px 14px; font-weight: 600; }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(96px + env(safe-area-inset-bottom, 0px)); z-index: 30; background: var(--fg); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-size: 14px; max-width: calc(100% - 32px); text-align: center; }
+@media (prefers-reduced-motion: no-preference) {
+  .sheet { animation: up .22s ease-out; }
+  @keyframes up { from { transform: translateY(40px); opacity: .6; } to { transform: none; opacity: 1; } }
+}
+</style>
+
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><b id="shop"></b><span id="zone"></span></div>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+      <input id="q" type="text" placeholder="Найти: яблоки, хурма, халва…" autocomplete="off" enterkeyhint="search" aria-label="Поиск товара">
+      <button class="clear" id="qclear" type="button" aria-label="Очистить поиск" hidden>×</button>
+    </div>
+    <nav class="chips" id="chips" aria-label="Разделы"></nav>
+  </div>
+</header>
+
+<main class="wrap" id="list"></main>
+
+<div class="bar" id="bar" hidden>
+  <div class="wrap">
+    <button class="barbtn" id="barbtn" type="button">
+      <div><b id="bartotal"></b><span id="barnote"></span></div>
+      <div class="go">Корзина →</div>
+    </button>
+  </div>
+</div>
+
+<div class="veil" id="veil" hidden></div>
+<section class="sheet" id="cart" hidden aria-label="Корзина">
+  <div class="wrap">
+    <header><h3>Корзина</h3><button class="x" type="button" data-close aria-label="Закрыть">×</button></header>
+  </div>
+  <div class="wrap lines" id="lines"></div>
+  <div class="wrap">
+    <div class="sum" id="sum"></div>
+    <button class="cta" id="checkout" type="button">Оформить заказ</button>
+  </div>
+</section>
+<section class="sheet" id="qtysheet" hidden aria-label="Количество">
+  <div class="wrap">
+    <header><h3 id="qtytitle"></h3><button class="x" type="button" data-close aria-label="Закрыть">×</button></header>
+    <form class="qtybox" id="qtyform">
+      <div class="row"><input id="qtyinput" inputmode="decimal" autocomplete="off" aria-label="Количество"><span class="u" id="qtyunit"></span></div>
+      <div class="quick" id="qtyquick"></div>
+      <button class="cta" type="submit">Готово</button>
+    </form>
+  </div>
+</section>
+<div class="toast" id="toast" hidden></div>
+
+<script id="data" type="application/json">{"shop": {"name": "Фрукты ягоды", "min_order": 1500, "delivery_fee": 200, "free_from": 3000, "first_order_discount": 0.1}, "sections": ["Овощи", "Яблоки и груши", "Цитрусовые", "Хурма, гранат, киви", "Виноград", "Восточные сладости", "Чай"], "items": [{"code": "tomato_cherry", "title": "Помидор черри", "desc": "", "price": 450, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "tomato_plum", "title": "Помидор сливка", "desc": "", "price": 250, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "tomato_pink", "title": "Помидор розовый Азербайджан", "desc": "", "price": 350, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "cucumber", "title": "Огурцы Леро", "desc": "", "price": 480, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "zucchini", "title": "Кабачок", "desc": "", "price": 220, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "eggplant", "title": "Баклажан", "desc": "", "price": 220, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "pepper_red", "title": "Перец красный", "desc": "", "price": 365, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "pepper_green", "title": "Перец зелёный", "desc": "", "price": 150, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "pepper_hot", "title": "Перец капи острый", "desc": "", "price": 425, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "ginger", "title": "Имбирь", "desc": "", "price": 700, "unit": "кг", "section": "Овощи", "photo": ""}, {"code": "apple_vengerka", "title": "Яблоко Венгерка", "desc": "", "price": 150, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_gala", "title": "Яблоко Гала", "desc": "", "price": 150, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_simirenko", "title": "Яблоко Симеринка", "desc": "", "price": 150, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_idared", "title": "Яблоко Айдарэд", "desc": "", "price": 155, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_grushovka", "title": "Яблоко Грушовка", "desc": "", "price": 165, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_granny", "title": "Яблоко Гренни Смит", "desc": "", "price": 165, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_champion", "title": "Яблоко Чемпион", "desc": "", "price": 175, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "apple_banana", "title": "Яблоко банановое", "desc": "", "price": 250, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "pear_conference", "title": "Груша Конференция", "desc": "", "price": 450, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "quince", "title": "Айва", "desc": "", "price": 300, "unit": "кг", "section": "Яблоки и груши", "photo": ""}, {"code": "mandarin_leaves", "title": "Мандарин с листьями", "desc": "", "price": 255, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "mandarin_abkhazia", "title": "Мандарин Абхазия", "desc": "", "price": 300, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "mandarin_baby", "title": "Мандарин Бейби", "desc": "", "price": 315, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "mandarin_peru", "title": "Мандарин Перу", "desc": "", "price": 350, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "orange", "title": "Апельсин", "desc": "", "price": 250, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "orange_morocco", "title": "Апельсин Марокко", "desc": "", "price": 300, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "grapefruit", "title": "Грейпфрут", "desc": "", "price": 295, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "lemon_turkey", "title": "Лимон Турция", "desc": "", "price": 350, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "lemon_uzbek", "title": "Лимон Узбекистан", "desc": "", "price": 750, "unit": "кг", "section": "Цитрусовые", "photo": ""}, {"code": "persimmon_romashka", "title": "Хурма Ромашка", "desc": "", "price": 195, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "persimmon_korolek", "title": "Хурма Королёк", "desc": "", "price": 195, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "persimmon_honey", "title": "Хурма медовая", "desc": "", "price": 245, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "pomegranate_az", "title": "Гранат Азербайджан", "desc": "", "price": 350, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "pomegranate_peru", "title": "Гранат Перу", "desc": "", "price": 380, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "pomegranate_seedless", "title": "Гранат без косточек", "desc": "", "price": 520, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "kiwi_iran", "title": "Киви Иран", "desc": "", "price": 185, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "kiwi_peru", "title": "Киви Перу", "desc": "", "price": 270, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "feijoa", "title": "Фейхоа", "desc": "", "price": 370, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "mango_egypt", "title": "Манго Египет", "desc": "Цена за 1 шт", "price": 250, "unit": "шт", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "plum_iran", "title": "Слива Иран", "desc": "", "price": 275, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "plum_prune", "title": "Чернослив", "desc": "", "price": 395, "unit": "кг", "section": "Хурма, гранат, киви", "photo": ""}, {"code": "grape_taifi", "title": "Тайфи", "desc": "Виноград", "price": 235, "unit": "кг", "section": "Виноград", "photo": ""}, {"code": "grape_lidia", "title": "Виноград Лидия", "desc": "", "price": 250, "unit": "кг", "section": "Виноград", "photo": ""}, {"code": "grape_kishmish_black", "title": "Киш-миш", "desc": "Виноград тёмный", "price": 350, "unit": "кг", "section": "Виноград", "photo": ""}, {"code": "grape_ladyfinger", "title": "Виноград Дамские пальчики", "desc": "", "price": 350, "unit": "кг", "section": "Виноград", "photo": ""}, {"code": "grape_kishmish_pink", "title": "Киш-миш розовый", "desc": "Виноград", "price": 355, "unit": "кг", "section": "Виноград", "photo": ""}, {"code": "grape_kishmish_white", "title": "Виноград Киш-миш", "desc": "", "price": 420, "unit": "кг", "section": "Виноград", "photo": ""}, {"code": "baklava", "title": "Пахлава домашняя", "desc": "200 ₽ за 100 г", "price": 2000, "unit": "кг", "section": "Восточные сладости", "photo": ""}, {"code": "halva", "title": "Халва", "desc": "", "price": 600, "unit": "кг", "section": "Восточные сладости", "photo": ""}, {"code": "halva_pashmak", "title": "Халва Пашмак", "desc": "Цена за 1 шт", "price": 300, "unit": "шт", "section": "Восточные сладости", "photo": ""}, {"code": "kadaif", "title": "Кадаиф", "desc": "Цена за 1 шт", "price": 600, "unit": "шт", "section": "Восточные сладости", "photo": ""}, {"code": "dubai_dessert", "title": "Дубайский десерт", "desc": "Цена за 1 шт", "price": 300, "unit": "шт", "section": "Восточные сладости", "photo": ""}, {"code": "tea_aroma", "title": "Азерчай с ароматом", "desc": "Цена за упаковку", "price": 250, "unit": "шт", "section": "Чай", "photo": ""}, {"code": "tea_green_garden", "title": "Азерчай Зелёный сад", "desc": "Цена за упаковку", "price": 105, "unit": "шт", "section": "Чай", "photo": ""}]}</script>
+<script>
+(() => {
+  const DATA = JSON.parse(document.getElementById("data").textContent);
+  const S = DATA.shop, ITEMS = DATA.items, SECTIONS = DATA.sections;
+  const byCode = Object.fromEntries(ITEMS.map(p => [p.code, p]));
+  const tg = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData !== undefined ? window.Telegram.WebApp : null;
+  const inTelegram = !!(tg && tg.platform && tg.platform !== "unknown");
+  const $ = id => document.getElementById(id);
+
+  // ---------- оформление под Telegram ----------
+  if (tg) {
+    try {
+      tg.ready(); tg.expand();
+      if (inTelegram) document.documentElement.dataset.theme = tg.colorScheme === "dark" ? "dark" : "light";
+      const bg = getComputedStyle(document.body).backgroundColor;
+      tg.setHeaderColor && tg.setHeaderColor(bg); tg.setBackgroundColor && tg.setBackgroundColor(bg);
+    } catch (e) {}
+  }
+  const haptic = () => { try { tg && tg.HapticFeedback && tg.HapticFeedback.impactOccurred("light"); } catch (e) {} };
+
+  // ---------- деньги и количество ----------
+  const rub = n => Math.round(n).toLocaleString("ru-RU").replace(/ | /g, " ") + " ₽";
+  const byWeight = p => p.unit === "кг";
+  const fmtQty = (p, q) => byWeight(p) ? String(+q.toFixed(2)).replace(".", ",") + " кг" : q + " шт";
+  const first = p => byWeight(p) ? (p.price >= 600 ? 0.3 : 1) : 1;
+  const stepOf = p => byWeight(p) ? (p.price >= 600 ? 0.1 : 0.5) : 1;
+  const priceText = p => byWeight(p) ? rub(p.price) + "/кг" : rub(p.price);
+
+  // ---------- корзина (переживает случайное закрытие) ----------
+  let cart = {};
+  try { cart = JSON.parse(localStorage.getItem("cart") || "{}") || {}; } catch (e) { cart = {}; }
+  for (const c of Object.keys(cart)) if (!byCode[c] || !(cart[c] > 0)) delete cart[c];
+  const save = () => { try { localStorage.setItem("cart", JSON.stringify(cart)); } catch (e) {} };
+  const total = () => Object.entries(cart).reduce((s, [c, q]) => s + byCode[c].price * q, 0);
+  function setQty(code, q) {
+    const p = byCode[code];
+    q = byWeight(p) ? Math.round(q * 100) / 100 : Math.round(q);
+    if (q <= 0.001) delete cart[code]; else cart[code] = Math.min(q, 100);
+    save(); haptic(); refresh(code);
+  }
+  const inc = code => setQty(code, (cart[code] || 0) ? cart[code] + stepOf(byCode[code]) : first(byCode[code]));
+  const dec = code => {
+    const p = byCode[code], q = cart[code] || 0;
+    setQty(code, q - stepOf(p) < first(p) - 0.001 ? 0 : q - stepOf(p));
+  };
+
+  // ---------- поиск: те же правила, что в боте ----------
+  const SYN = { "перцы": "перец", "перца": "перец", "перчик": "перец", "огурец": "огурцы", "огурчики": "огурцы",
+    "томат": "помидор", "томаты": "помидор", "чай": "азерчай", "чаи": "азерчай" };
+  const STOP = new Set(["кг", "шт", "г", "гр", "грамм", "еще", "и", "в", "на", "с", "мне", "хочу", "нужно", "нужны", "есть"]);
+  const words = t => (t.toLowerCase().replace(/ё/g, "е").replace(/-/g, "").match(/[a-zа-я0-9]+/g) || []);
+  const stem = w => { w = SYN[w] || w; return w.length >= 6 ? w.slice(0, -2) : w.length === 5 ? w.slice(0, 4) : w; };
+  function matches(p, query, withSection) {
+    const want = words(query).filter(w => !STOP.has(w)).map(stem);
+    if (!want.length) return false;
+    const hay = words(p.title + " " + p.desc + (withSection ? " " + p.section : ""));
+    return want.every(w => hay.some(h => h.startsWith(w)));
+  }
+  function search(q) {
+    const a = ITEMS.filter(p => matches(p, q, false));
+    return a.length ? a : ITEMS.filter(p => matches(p, q, true));
+  }
+
+  // ---------- карточки ----------
+  const secIndex = Object.fromEntries(SECTIONS.map((s, i) => [s, i % 7]));
+  function photo(p, cls = "") {
+    const i = secIndex[p.section] ?? 0;
+    const inner = p.photo
+      ? `<img src="${p.photo}" alt="" loading="lazy">`
+      : `<span class="mono" style="color:var(--s${i}i)">${p.title.trim()[0]}</span>`;
+    return `<div class="ph ${cls}" style="background:var(--s${i})">${inner}${cls ? "" : `<span class="unitbadge">${byWeight(p) ? "за 1 кг" : p.desc && /упак/.test(p.desc) ? "за упаковку" : "за 1 шт"}</span>`}</div>`;
+  }
+  function buyHTML(p) {
+    const q = cart[p.code];
+    if (!q) return `<button class="add" type="button" data-inc="${p.code}" aria-label="Добавить ${p.title}">${rub(p.price)}${byWeight(p) ? "<small>/кг</small>" : ""}<span class="plus">+</span></button>`;
+    return `<div class="step"><button type="button" data-dec="${p.code}" aria-label="Меньше">−</button><button class="q" type="button" data-qty="${p.code}" aria-label="Указать количество">${fmtQty(p, q)}</button><button type="button" data-inc="${p.code}" aria-label="Больше">+</button></div>`;
+  }
+  const shortDesc = p => (p.desc && !/^Цена за/.test(p.desc)) ? p.desc : "";
+  const card = p => `<article class="card" data-card="${p.code}">${photo(p)}<div class="name">${p.title}</div>${shortDesc(p) ? `<div class="desc">${shortDesc(p)}</div>` : ""}<div class="buy" data-buy="${p.code}">${buyHTML(p)}</div></article>`;
+
+  let query = "";
+  function renderList() {
+    const list = $("list");
+    if (query.trim()) {
+      const found = search(query);
+      list.innerHTML = found.length
+        ? `<section class="section"><h2>Нашли ${found.length}</h2><div class="grid">${found.map(card).join("")}</div></section>`
+        : `<div class="empty"><b>Ничего не нашли по «${query.replace(/</g, "&lt;")}»</b>Попробуйте короче, например «ябл». Или напишите в чат с ботом — продавец подскажет, что есть.</div>`;
+      return;
+    }
+    list.innerHTML = SECTIONS.map((s, i) => {
+      const ps = ITEMS.filter(p => p.section === s);
+      return `<section class="section" id="sec${i}"><h2>${s}</h2><div class="grid">${ps.map(card).join("")}</div></section>`;
+    }).join("");
+    if (io) list.querySelectorAll(".section[id]").forEach(el => io.observe(el));
+  }
+  function renderChips() {
+    $("chips").innerHTML = SECTIONS.map((s, i) => `<button class="chip" type="button" data-sec="${i}" aria-pressed="false">${s}</button>`).join("");
+  }
+  function refresh(code) {
+    if (code) document.querySelectorAll(`[data-buy="${code}"]`).forEach(el => el.innerHTML = buyHTML(byCode[code]));
+    renderBar();
+    if (!$("cart").hidden) renderCart();
+  }
+
+  // ---------- нижняя панель ----------
+  function hint(t) {
+    if (t < S.min_order) return { text: `До минимального заказа ${rub(S.min_order - t)}`, warn: true };
+    if (t < S.free_from) return { text: `До бесплатной доставки ${rub(S.free_from - t)}`, warn: false };
+    return { text: "Доставка бесплатная", warn: false };
+  }
+  function renderBar() {
+    const n = Object.keys(cart).length, t = total();
+    $("bar").hidden = n === 0;
+    if (!n) return;
+    $("bartotal").textContent = "≈ " + rub(t);
+    $("barnote").textContent = `${n} ${plural(n, "товар", "товара", "товаров")} · ${hint(t).text.toLowerCase()}`;
+  }
+  const plural = (n, a, b, c) => { const m = n % 10, h = n % 100; return m === 1 && h !== 11 ? a : m >= 2 && m <= 4 && (h < 12 || h > 14) ? b : c; };
+
+  // ---------- шторки ----------
+  let openSheet = null;
+  function show(id) {
+    hideSheets(); openSheet = id; $(id).hidden = false; $("veil").hidden = false;
+    try { tg && tg.BackButton.show(); } catch (e) {}
+  }
+  function hideSheets() {
+    ["cart", "qtysheet"].forEach(id => $(id).hidden = true); $("veil").hidden = true; openSheet = null;
+    try { tg && tg.BackButton.hide(); } catch (e) {}
+  }
+  try { tg && tg.BackButton.onClick(hideSheets); } catch (e) {}
+
+  function renderCart() {
+    const codes = Object.keys(cart);
+    if (!codes.length) { hideSheets(); return; }
+    $("lines").innerHTML = codes.map(c => {
+      const p = byCode[c], q = cart[c];
+      return `<div class="line">${photo(p, "mini")}<div><div class="t">${p.title}</div><div class="p">${priceText(p)} · ≈ ${rub(p.price * q)}</div></div><div data-buy="${c}">${buyHTML(p)}</div></div>`;
+    }).join("");
+    const t = total(), h = hint(t), first = S.first_order_discount;
+    $("sum").innerHTML =
+      `<div class="tot"><span>Товары</span><span>≈ ${rub(t)}</span></div>` +
+      `<div class="note ${h.warn ? "warn" : ""}">${h.text}. Доставка ${rub(S.delivery_fee)}, от ${rub(S.free_from)} — бесплатно.</div>` +
+      `<div class="note">Фрукты на вес: точную сумму продавец напишет после взвешивания.${first ? ` На первый заказ скидка ${Math.round(first * 100)}%.` : ""}</div>` +
+      `<div><button class="link" type="button" id="clearcart">Очистить корзину</button></div>`;
+    $("checkout").disabled = t < S.min_order;
+    $("checkout").textContent = t < S.min_order ? `Минимальный заказ ${rub(S.min_order)}` : "Оформить заказ →";
+  }
+
+  let qtyCode = null;
+  function openQty(code) {
+    const p = byCode[code]; qtyCode = code;
+    $("qtytitle").textContent = p.title;
+    $("qtyunit").textContent = byWeight(p) ? "кг" : "шт";
+    $("qtyinput").value = cart[code] ? String(cart[code]).replace(".", ",") : "";
+    const opts = byWeight(p) ? (p.price >= 600 ? [0.2, 0.3, 0.5, 1] : [0.5, 1, 1.5, 2, 3]) : [1, 2, 3, 5];
+    $("qtyquick").innerHTML = opts.map(v => `<button type="button" data-quick="${v}">${fmtQty(p, v)}</button>`).join("");
+    show("qtysheet");
+    setTimeout(() => $("qtyinput").focus(), 50);
+  }
+
+  let toastTimer;
+  function toast(text) {
+    $("toast").textContent = text; $("toast").hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => $("toast").hidden = true, 2600);
+  }
+
+  // ---------- оформление: корзина уходит в чат с ботом ----------
+  function checkout() {
+    const items = Object.entries(cart).map(([c, q]) => [c, q]);
+    if (!items.length || total() < S.min_order) return;
+    const payload = JSON.stringify({ v: 1, items });
+    if (inTelegram && tg.sendData) {
+      try { localStorage.removeItem("cart"); } catch (e) {}
+      tg.sendData(payload);   // Telegram закроет витрину, бот продолжит оформление в чате
+      return;
+    }
+    toast("Это предпросмотр. В Telegram корзина уйдёт в чат с ботом, и он спросит адрес и время.");
+  }
+
+  // ---------- события ----------
+  document.addEventListener("click", e => {
+    const t = e.target.closest("button, .veil");
+    if (!t) return;
+    if (t.id === "veil" || t.hasAttribute("data-close")) return hideSheets();
+    if (t.dataset.inc) return inc(t.dataset.inc);
+    if (t.dataset.dec) return dec(t.dataset.dec);
+    if (t.dataset.qty) return openQty(t.dataset.qty);
+    if (t.dataset.quick) { $("qtyinput").value = String(t.dataset.quick).replace(".", ","); return; }
+    if (t.dataset.sec !== undefined) {
+      if (query) { query = ""; $("q").value = ""; $("qclear").hidden = true; renderList(); }
+      const el = $("sec" + t.dataset.sec);
+      el && el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      return;
+    }
+    if (t.id === "barbtn") { renderCart(); return show("cart"); }
+    if (t.id === "checkout") return checkout();
+    if (t.id === "clearcart") { cart = {}; save(); renderList(); renderBar(); hideSheets(); return; }
+    if (t.id === "qclear") { query = ""; $("q").value = ""; t.hidden = true; renderList(); $("q").focus(); }
+  });
+  $("q").addEventListener("input", e => { query = e.target.value; $("qclear").hidden = !query; renderList(); window.scrollTo(0, 0); });
+  $("q").addEventListener("keydown", e => { if (e.key === "Enter") e.target.blur(); });
+  $("qtyform").addEventListener("submit", e => {
+    e.preventDefault();
+    const p = byCode[qtyCode];
+    let raw = $("qtyinput").value.trim().toLowerCase().replace(",", ".");
+    let v = parseFloat(raw);
+    if (byWeight(p) && /г/.test(raw.replace("кг", "")) && v >= 50) v = v / 1000;
+    if (!(v >= 0) || v > 100) { $("qtyinput").focus(); return; }
+    setQty(qtyCode, v); hideSheets();
+  });
+
+  // разделы подсвечиваются при прокрутке
+  const io = "IntersectionObserver" in window ? new IntersectionObserver(entries => {
+    for (const en of entries) if (en.isIntersecting) {
+      const i = en.target.id.slice(3);
+      document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c.dataset.sec === i ? "true" : "false"));
+    }
+  }, { rootMargin: "-150px 0px -60% 0px" }) : null;
+
+  $("shop").textContent = S.name;
+  $("zone").textContent = "Доставка по ЖК";
+  renderChips(); renderList(); renderBar();
+})();
+</script>
+
+</body>
+</html>
