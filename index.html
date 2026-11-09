@@ -64,7 +64,7 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
-button, input { font: inherit; color: inherit; }
+button, input, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
@@ -141,6 +141,22 @@ main { padding-block: 6px 120px; }
 .cta { width: 100%; height: 52px; border: 0; border-radius: 16px; background: var(--accent); color: var(--accent-ink); font-size: 17px; font-weight: 700; margin-block: 4px 14px; }
 .cta[disabled] { opacity: .45; cursor: default; }
 .link { border: 0; background: transparent; color: var(--muted); text-decoration: underline; padding: 0; font-size: 14px; }
+/* оформление заказа */
+.sheet.tall { height: 92vh; max-height: 92vh; }
+.sheet.tall .scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.form { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; padding-block: 4px 12px; }
+.field { display: grid; gap: 8px; min-width: 0; }
+.field > b { font-size: 15px; font-weight: 700; }
+.field > b small { font-weight: 500; color: var(--muted); font-size: 13px; }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt { border: 1px solid var(--line); background: var(--bg); border-radius: 12px; padding: 9px 13px; font-size: 14px; font-weight: 600; text-align: left; }
+.opt[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--fg); }
+.field input, .field textarea { width: 100%; min-width: 0; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); padding: 12px 14px; font-size: 16px; }
+.field textarea { min-height: 70px; resize: vertical; }
+.field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+.field.bad input, .field.bad .opts { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 12px; }
+.err { color: var(--accent); font-size: 13px; font-weight: 600; }
+.foot { border-top: 1px solid var(--line); padding-block: 10px 6px; background: var(--surface); }
 .qtybox { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; padding-block: 4px 16px; }
 .qtybox .row { display: flex; gap: 10px; align-items: center; }
 .qtybox input { flex: 1; min-width: 0; height: 52px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg); padding: 0 14px; font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -201,9 +217,32 @@ main { padding-block: 6px 120px; }
     </form>
   </div>
 </section>
+<section class="sheet tall" id="order" hidden aria-label="Оформление заказа">
+  <div class="wrap">
+    <header><h3>Оформление</h3><button class="x" type="button" data-close aria-label="Закрыть">×</button></header>
+  </div>
+  <div class="wrap scroll">
+    <form class="form" id="orderform" novalidate>
+      <div class="field" id="f-house"><b>Куда привезти</b><div class="opts" id="o-house"></div><div class="note" id="zone-note" hidden></div></div>
+      <div class="field" id="f-apartment"><b>Подъезд, этаж, квартира</b><input id="i-apartment" autocomplete="off" placeholder="2 подъезд, 5 этаж, кв. 45" maxlength="200"></div>
+      <div class="field" id="f-slot"><b>Когда привезти</b><div class="opts" id="o-slot"></div></div>
+      <div class="field" id="f-phone"><b>Телефон</b><input id="i-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 123-45-67" maxlength="30"></div>
+      <div class="field" id="f-substitution"><b>Если какого-то товара не будет</b><div class="opts" id="o-substitution"></div></div>
+      <div class="field" id="f-payment"><b>Оплата при получении <small>· терминал у курьера</small></b><div class="opts" id="o-payment"></div></div>
+      <div class="field"><b>Промокод <small>· если есть</small></b><input id="i-promo" autocomplete="off" placeholder="Например, СОСЕД" maxlength="30"></div>
+      <div class="field"><b>Откуда узнали о нас <small>· по желанию</small></b><div class="opts" id="o-source"></div></div>
+      <div class="field"><b>Чего нет на витрине <small>· по желанию</small></b><textarea id="i-note" maxlength="1000" placeholder="Например: лук 1 кг, чеснок. Продавец добавит, если есть."></textarea></div>
+    </form>
+  </div>
+  <div class="wrap foot">
+    <div class="sum" id="ordersum"></div>
+    <div class="err" id="ordererr" hidden></div>
+    <button class="cta" id="placeorder" type="button">Заказать</button>
+  </div>
+</section>
 <div class="toast" id="toast" hidden></div>
 
-<script id="data" type="application/json">{"shop": {"name": "Фрукты ягоды", "min_order": 1500, "delivery_fee": 200, "free_from": 3000, "first_order_discount": 0.1}, "catalog_url": "https://docs.google.com/spreadsheets/d/1em0O1--v0GNlda7v4JgPxkIgELoqBs1iBTFIYPEu1YQ/gviz/tq?tqx=out:csv&headers=1&sheet=%D0%92%D0%B8%D1%82%D1%80%D0%B8%D0%BD%D0%B0", "only_with_photos": true, "sections": ["Яблоки и груши", "Цитрусовые"], "items": [{"code": "apple_vengerka", "title": "Яблоко Венгерка", "desc": "", "price": 150, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_vengerka.jpg"}, {"code": "apple_idared", "title": "Яблоко Айдарэд", "desc": "", "price": 155, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_idared.jpg"}, {"code": "apple_grushovka", "title": "Яблоко Грушовка", "desc": "", "price": 165, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_grushovka.jpg"}, {"code": "apple_granny", "title": "Яблоко Гренни Смит", "desc": "", "price": 165, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_granny.jpg"}, {"code": "apple_champion", "title": "Яблоко Чемпион", "desc": "", "price": 175, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_champion.jpg"}, {"code": "apple_banana", "title": "Яблоко банановое", "desc": "", "price": 250, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_banana.jpg"}, {"code": "mandarin_leaves", "title": "Мандарин с листьями", "desc": "", "price": 255, "unit": "кг", "section": "Цитрусовые", "photo": "photos/mandarin_leaves.jpg"}, {"code": "mandarin_abkhazia", "title": "Мандарин Абхазия", "desc": "", "price": 300, "unit": "кг", "section": "Цитрусовые", "photo": "photos/mandarin_abkhazia.jpg"}, {"code": "mandarin_baby", "title": "Мандарин Бейби", "desc": "", "price": 315, "unit": "кг", "section": "Цитрусовые", "photo": "photos/mandarin_baby.jpg"}, {"code": "mandarin_peru", "title": "Мандарин Перу", "desc": "", "price": 350, "unit": "кг", "section": "Цитрусовые", "photo": "photos/mandarin_peru.jpg"}]}</script>
+<script id="data" type="application/json">{"shop": {"name": "Фрукты ягоды", "min_order": 1500, "delivery_fee": 200, "free_from": 3000, "first_order_discount": 0.1}, "catalog_url": "https://docs.google.com/spreadsheets/d/1em0O1--v0GNlda7v4JgPxkIgELoqBs1iBTFIYPEu1YQ/gviz/tq?tqx=out:csv&headers=1&sheet=%D0%92%D0%B8%D1%82%D1%80%D0%B8%D0%BD%D0%B0", "only_with_photos": true, "sections": ["Яблоки и груши", "Цитрусовые"], "checkout": {"houses": ["Барамзиной, 32", "Барамзиной, 32В", "Барамзиной, 38", "Герцена, 4", "Герцена, 4А"], "zone": "ул. Татьяны Барамзиной, 32, 32В, 38 и ул. Герцена, 4, 4А", "shop_address": "ул. Татьяны Барамзиной, 32", "slots": [{"key": "day", "label": "12:00–15:00", "cutoff": 11}, {"key": "evening", "label": "18:00–21:00", "cutoff": 17}], "weekdays": [0, 1, 2, 3, 4, 5, 6], "tz_offset_hours": 5, "substitutions": {"similar": "Заменить на похожее", "remove": "Убрать из заказа", "ask": "Спросить меня"}, "payments": {"card": "Картой", "qr": "По QR"}, "sources": ["Telegram-канал", "Группа VK", "Чат дома", "Листовка", "Яндекс Карты / 2ГИС", "Друзья", "Другое"]}, "items": [{"code": "apple_vengerka", "title": "Яблоко Венгерка", "desc": "", "price": 150, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_vengerka.jpg"}, {"code": "apple_idared", "title": "Яблоко Айдарэд", "desc": "", "price": 155, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_idared.jpg"}, {"code": "apple_grushovka", "title": "Яблоко Грушовка", "desc": "", "price": 165, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_grushovka.jpg"}, {"code": "apple_granny", "title": "Яблоко Гренни Смит", "desc": "", "price": 165, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_granny.jpg"}, {"code": "apple_champion", "title": "Яблоко Чемпион", "desc": "", "price": 175, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_champion.jpg"}, {"code": "apple_banana", "title": "Яблоко банановое", "desc": "", "price": 250, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_banana.jpg"}, {"code": "mandarin_leaves", "title": "Мандарин с листьями", "desc": "", "price": 255, "unit": "кг", "section": "Цитрусовые", "photo": "photos/mandarin_leaves.jpg"}, {"code": "mandarin_abkhazia", "title": "Мандарин Абхазия", "desc": "", "price": 300, "unit": "кг", "section": "Цитрусовые", "photo": "photos/mandarin_abkhazia.jpg"}, {"code": "mandarin_baby", "title": "Мандарин Бейби", "desc": "", "price": 315, "unit": "кг", "section": "Цитрусовые", "photo": "photos/mandarin_baby.jpg"}, {"code": "mandarin_peru", "title": "Мандарин Перу", "desc": "", "price": 350, "unit": "кг", "section": "Цитрусовые", "photo": "photos/mandarin_peru.jpg"}]}</script>
 <script>
 (() => {
   const DATA = JSON.parse(document.getElementById("data").textContent);
@@ -370,7 +409,7 @@ main { padding-block: 6px 120px; }
     try { tg && tg.BackButton.show(); } catch (e) {}
   }
   function hideSheets() {
-    ["cart", "qtysheet"].forEach(id => $(id).hidden = true); $("veil").hidden = true; openSheet = null;
+    ["cart", "qtysheet", "order"].forEach(id => $(id).hidden = true); $("veil").hidden = true; openSheet = null;
     try { tg && tg.BackButton.hide(); } catch (e) {}
   }
 
@@ -409,18 +448,91 @@ main { padding-block: 6px 120px; }
     clearTimeout(toastTimer); toastTimer = setTimeout(() => $("toast").hidden = true, 2600);
   }
 
-  // ---------- оформление: корзина уходит в чат с ботом ----------
-  function checkout() {
-    const items = Object.entries(cart).map(([c, q]) => [c, q]);
-    if (!items.length || total() < S.min_order) return;
-    const payload = JSON.stringify({ v: 1, items });
+  // ---------- оформление заказа прямо в витрине ----------
+  const C = DATA.checkout;
+  const form = { house: null, slot: null, substitution: "similar", payment: Object.keys(C.payments)[0], source: null };
+  try {   // адрес и телефон помним с прошлого заказа
+    const saved = JSON.parse(localStorage.getItem("orderform") || "{}");
+    if (C.houses.includes(saved.house)) form.house = saved.house;
+    if (saved.substitution in C.substitutions) form.substitution = saved.substitution;
+    if (saved.payment in C.payments) form.payment = saved.payment;
+    $("i-apartment").value = saved.apartment || "";
+    $("i-phone").value = saved.phone || "";
+  } catch (e) {}
+
+  // ближайшие слоты — по тем же правилам, что в боте (время Перми, отсечка, дни доставки)
+  function slotOptions() {
+    const local = new Date(Date.now() + C.tz_offset_hours * 3600e3);
+    const names = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"], out = [];
+    for (let d = 0; d < 14 && out.length < 4; d++) {
+      const day = new Date(Date.UTC(local.getUTCFullYear(), local.getUTCMonth(), local.getUTCDate() + d));
+      const wd = (day.getUTCDay() + 6) % 7;
+      if (!C.weekdays.includes(wd)) continue;
+      const iso = day.toISOString().slice(0, 10);
+      const word = d === 0 ? "Сегодня" : d === 1 ? "Завтра" : `${iso.slice(8, 10)}.${iso.slice(5, 7)} (${names[wd]})`;
+      for (const s of C.slots) {
+        if (d === 0 && local.getUTCHours() >= s.cutoff) continue;
+        out.push({ code: `${iso}|${s.key}`, label: `${word}, ${s.label}` });
+        if (out.length >= 4) break;
+      }
+    }
+    return out;
+  }
+  const opts = (name, list, current) => list.map(([v, label]) =>
+    `<button class="opt" type="button" data-opt="${name}" data-v="${esc(v)}" aria-pressed="${String(v) === String(current)}">${esc(label)}</button>`).join("");
+  function renderOrder() {
+    const slots = slotOptions();
+    if (!slots.some(s => s.code === form.slot)) form.slot = null;
+    $("o-house").innerHTML = opts("house", [...C.houses.map(h => [h, h]), ["other", "Другой адрес"]], form.house);
+    $("o-slot").innerHTML = opts("slot", slots.map(s => [s.code, s.label]), form.slot);
+    $("o-substitution").innerHTML = opts("substitution", Object.entries(C.substitutions), form.substitution);
+    $("o-payment").innerHTML = opts("payment", Object.entries(C.payments), form.payment);
+    $("o-source").innerHTML = opts("source", C.sources.map(s => [s, s]), form.source);
+    const other = form.house === "other";
+    $("zone-note").hidden = !other;
+    $("zone-note").textContent = `Пока возим только сюда: ${C.zone}. Можем собрать заказ к вашему приходу в магазин: ${C.shop_address} — напишите нам в чат.`;
+    const t = total();
+    $("ordersum").innerHTML = `<div class="tot"><span>Товары</span><span>≈ ${rub(t)}</span></div>` +
+      `<div class="note">${t >= S.free_from ? "Доставка бесплатно" : `+ доставка ${rub(S.delivery_fee)}`} · точная сумма после взвешивания${S.first_order_discount ? ` · −${Math.round(S.first_order_discount * 100)}% на первый заказ` : ""}</div>`;
+    $("placeorder").disabled = other;
+    $("placeorder").textContent = `Заказать · ≈ ${rub(t)}`;
+  }
+  function openOrder() {
+    if (!Object.keys(cart).length || total() < S.min_order) return;
+    $("ordererr").hidden = true;
+    document.querySelectorAll(".field.bad").forEach(f => f.classList.remove("bad"));
+    renderOrder(); show("order");
+  }
+  function validate(scroll = true) {
+    const bad = [];
+    if (!C.houses.includes(form.house)) bad.push(["f-house", "дом"]);
+    if (!$("i-apartment").value.trim()) bad.push(["f-apartment", "квартиру"]);
+    if (!form.slot) bad.push(["f-slot", "время"]);
+    if (($("i-phone").value.match(/\d/g) || []).length < 10) bad.push(["f-phone", "телефон"]);
+    document.querySelectorAll(".field.bad").forEach(f => f.classList.remove("bad"));
+    bad.forEach(([id]) => $(id).classList.add("bad"));
+    $("ordererr").hidden = !bad.length;
+    $("ordererr").textContent = bad.length ? "Укажите: " + bad.map(b => b[1]).join(", ") : "";
+    if (bad.length && scroll) $(bad[0][0]).scrollIntoView({ block: "center", behavior: "smooth" });
+    return !bad.length;
+  }
+  // после первой попытки подсказка обновляется по мере заполнения
+  ["i-apartment", "i-phone"].forEach(id => $(id).addEventListener("input", () => { if (!$("ordererr").hidden) validate(false); }));
+  function placeOrder() {
+    if (!validate()) return;
+    const order = { house: form.house, apartment: $("i-apartment").value.trim(), slot: form.slot,
+      phone: $("i-phone").value.trim(), substitution: form.substitution, payment: form.payment,
+      promo: $("i-promo").value.trim(), source: form.source || "", note: $("i-note").value.trim() };
+    try { localStorage.setItem("orderform", JSON.stringify({ house: order.house, apartment: order.apartment,
+      phone: order.phone, substitution: order.substitution, payment: order.payment })); } catch (e) {}
+    const payload = JSON.stringify({ v: 2, items: Object.entries(cart), order });
     if (inTelegram()) {
       try { localStorage.removeItem("cart"); } catch (e) {}
-      // Telegram закроет витрину, бот продолжит оформление в чате
+      // Telegram закроет витрину, а бот сразу отправит заказ продавцу и пришлёт подтверждение
       if (tg && tg.sendData) tg.sendData(payload); else postEvent("web_app_data_send", { data: payload });
       return;
     }
-    toast("Это предпросмотр. В Telegram корзина уйдёт в чат с ботом, и он спросит адрес и время.");
+    toast("Это предпросмотр. В Telegram заказ сразу уйдёт продавцу, а в чат придёт подтверждение.");
   }
 
   // ---------- события ----------
@@ -439,7 +551,15 @@ main { padding-block: 6px 120px; }
       return;
     }
     if (t.id === "barbtn") { renderCart(); return show("cart"); }
-    if (t.id === "checkout") return checkout();
+    if (t.id === "checkout") return openOrder();
+    if (t.id === "placeorder") return placeOrder();
+    if (t.dataset.opt) {
+      const name = t.dataset.opt, v = t.dataset.v;
+      form[name] = name === "source" && form.source === v ? null : v;   // «откуда узнали» можно снять
+      renderOrder();
+      if (!$("ordererr").hidden) validate(false);
+      return;
+    }
     if (t.id === "clearcart") { cart = {}; save(); renderList(); renderBar(); hideSheets(); return; }
     if (t.id === "qclear") { query = ""; $("q").value = ""; t.hidden = true; renderList(); $("q").focus(); }
   });
