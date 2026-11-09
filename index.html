@@ -302,11 +302,17 @@ main { padding-block: 6px 120px; }
   }
 
   // ---------- карточки ----------
+  // фото могут лежать в папке photos/ или прямо рядом со страницей — пробуем оба места, потом оставляем букву
+  const altPhoto = src => /^https?:/.test(src) ? "" : src.startsWith("photos/") ? src.slice(7) : "photos/" + src;
+  window.photoFailed = img => {
+    const alt = img.dataset.alt;
+    if (alt) { img.dataset.alt = ""; img.src = alt; } else img.remove();
+  };
   function photo(p, cls = "") {
     const i = Math.max(0, SECTIONS.indexOf(p.section)) % 7;
     // буква лежит под фото: если фото не загрузится, его просто убираем
     const inner = `<span class="mono" style="color:var(--s${i}i)">${esc(p.title.trim()[0] || "•")}</span>` +
-      (p.photo ? `<img src="${esc(p.photo)}" alt="" loading="lazy" onerror="this.remove()">` : "");
+      (p.photo ? `<img src="${esc(p.photo)}" data-alt="${esc(altPhoto(p.photo))}" alt="" loading="lazy" onerror="photoFailed(this)">` : "");
     return `<div class="ph ${cls}" style="background:var(--s${i})">${inner}${cls ? "" : `<span class="unitbadge">${byWeight(p) ? "за 1 кг" : p.desc && /упак/.test(p.desc) ? "за упаковку" : "за 1 шт"}</span>`}</div>`;
   }
   function buyHTML(p) {
