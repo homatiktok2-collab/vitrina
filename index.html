@@ -107,6 +107,24 @@ main { padding-block: 6px 120px; }
 .step { display: inline-flex; align-items: center; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-weight: 700; font-variant-numeric: tabular-nums; }
 .step button { width: 40px; height: 40px; border: 0; background: transparent; color: inherit; font-size: 22px; font-weight: 600; border-radius: 999px; }
 .step .q { min-width: 64px; height: 40px; border: 0; background: transparent; color: inherit; font-size: 15px; font-weight: 700; padding: 0 2px; }
+/* страница заказа для продавца */
+.ov-head { display: grid; gap: 4px; padding-block: 8px 4px; }
+.ov-head h1 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -.01em; }
+.ov-head p { margin: 0; color: var(--muted); font-size: 15px; }
+.ov-progress { height: 8px; border-radius: 99px; background: var(--tile); overflow: hidden; margin-block: 10px 4px; }
+.ov-progress i { display: block; height: 100%; background: var(--good); width: 0; transition: width .2s; }
+.ov-list { display: grid; gap: 10px; padding-block: 10px; }
+.ov-row { display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 8px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); }
+.ov-row .ph { border-radius: 14px; }
+.ov-row .mono { font-size: 30px; }
+.ov-row .t { font-weight: 600; font-size: 16px; }
+.ov-row .q { font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.ov-row .p { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.ov-row button { width: 44px; height: 44px; border-radius: 999px; border: 2px solid var(--line); background: var(--bg); font-size: 20px; color: transparent; }
+.ov-row.done { opacity: .55; }
+.ov-row.done button { background: var(--good); border-color: var(--good); color: #fff; }
+.ov-note { padding: 12px 14px; border-radius: 14px; background: var(--accent-soft); font-size: 15px; }
+.ov-total { display: flex; justify-content: space-between; font-size: 18px; font-weight: 800; padding-block: 8px; font-variant-numeric: tabular-nums; }
 .empty { text-align: center; color: var(--muted); padding: 48px 8px; }
 .empty b { display: block; color: var(--fg); font-size: 17px; margin-bottom: 6px; }
 
@@ -629,7 +647,9 @@ main { padding-block: 6px 120px; }
       applyItems(items);
       try { localStorage.setItem("catalog", JSON.stringify({ url: DATA.catalog_url, items })); } catch (e) {}
       for (const c of Object.keys(cart)) if (!byCode[c]) delete cart[c];
-      save(); renderChips(); renderList(); renderBar();
+      save();
+      if (orderView) { renderOrderView(); return; }
+      renderChips(); renderList(); renderBar();
       if (!$("cart").hidden) renderCart();
     } catch (e) {
       // нет сети или Google недоступен — работаем с последними известными ценами
@@ -638,7 +658,56 @@ main { padding-block: 6px 120px; }
 
   $("shop").textContent = S.name;
   $("zone").textContent = "Доставка по ЖК";
-  renderChips(); renderList(); renderBar();
+  // ---------- страница заказа для продавца: #order=4&i=код~кол-во~цена,... ----------
+  let orderView = null;
+  function parseOrderHash() {
+    const h = new URLSearchParams(location.hash.slice(1));
+    if (!h.get("order")) return null;
+    const items = (h.get("i") || "").split(",").filter(Boolean).map(x => {
+      const [code, qty, price] = x.split("~");
+      return { code, qty: parseFloat(qty) || 0, price: parseInt(price, 10) || 0 };
+    });
+    return { id: h.get("order"), slot: h.get("slot") || "", note: h.get("note") || "", items };
+  }
+  function doneKey() { return "order-done-" + orderView.id; }
+  function getDone() { try { return JSON.parse(localStorage.getItem(doneKey()) || "[]"); } catch (e) { return []; } }
+  function renderOrderView() {
+    const done = new Set(getDone());
+    const rows = orderView.items.map(it => {
+      const p = byCode[it.code] || { code: it.code, title: it.code, desc: "", unit: "кг", section: "", photo: `photos/${it.code}.jpg` };
+      const unit = p.unit || "кг";
+      const qtyText = unit === "кг" ? String(it.qty).replace(".", ",") + " кг" : Math.round(it.qty) + " шт";
+      return `<div class="ov-row ${done.has(it.code) ? "done" : ""}">${photo(p, "mini")}
+        <div><div class="t">${esc(p.title)}</div><div class="q">${qtyText}</div><div class="p">${rub(it.price)}${unit === "кг" ? "/кг" : ""} · ≈ ${rub(it.price * it.qty)}</div></div>
+        <button type="button" data-done="${esc(it.code)}" aria-pressed="${done.has(it.code)}" aria-label="Собрано">✓</button></div>`;
+    }).join("");
+    const sum = orderView.items.reduce((s, it) => s + it.price * it.qty, 0);
+    const n = orderView.items.length, k = orderView.items.filter(it => done.has(it.code)).length;
+    $("list").innerHTML = `<section class="ov-head"><h1>Заказ №${esc(orderView.id)}</h1>` +
+      (orderView.slot ? `<p>🕐 Доставка: ${esc(orderView.slot)}</p>` : "") +
+      `<p>Собрано ${k} из ${n}${k === n && n ? " — всё готово ✅" : ""}</p>` +
+      `<div class="ov-progress"><i style="width:${n ? Math.round(k / n * 100) : 0}%"></i></div></section>` +
+      `<div class="ov-list">${rows}</div>` +
+      (orderView.note ? `<div class="ov-note">✍️ Свой список: ${esc(orderView.note)}</div>` : "") +
+      `<div class="ov-total"><span>Ориентировочно</span><span>≈ ${rub(sum)}</span></div>` +
+      `<p class="note">Отмечайте ✓, что уже положили. Отметки хранятся только на этом телефоне.</p>`;
+  }
+  function route() {
+    orderView = parseOrderHash();
+    document.querySelector(".top").hidden = !!orderView;
+    if (orderView) { $("bar").hidden = true; hideSheets(); renderOrderView(); window.scrollTo(0, 0); return; }
+    renderChips(); renderList(); renderBar();
+  }
+  document.addEventListener("click", e => {
+    const b = e.target.closest("[data-done]");
+    if (!b || !orderView) return;
+    const done = new Set(getDone()), code = b.dataset.done;
+    done.has(code) ? done.delete(code) : done.add(code);
+    try { localStorage.setItem(doneKey(), JSON.stringify([...done])); } catch (e) {}
+    haptic(); renderOrderView();
+  });
+  window.addEventListener("hashchange", route);
+  route();
   loadSheet();
   window.__tgReady = initTg;
   initTg();
