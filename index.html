@@ -532,7 +532,7 @@ main { padding-block: 6px 120px; }
     if (!Object.keys(cart).length || total() < S.min_order) return;
     $("ordererr").hidden = true;
     document.querySelectorAll(".field.bad").forEach(f => f.classList.remove("bad"));
-    $("f-name").hidden = viaBot();
+    $("f-name").hidden = viaBot() || !!VK;
     renderOrder(); show("order");
   }
   function validate(scroll = true) {
@@ -553,6 +553,16 @@ main { padding-block: 6px 120px; }
   // заказ уходит через бота, только если витрину открыли кнопкой в чате бота (там работает sendData);
   // в обычном браузере (ВК, листовки, 2ГИС) — в Google-скрипт, а он присылает заказ продавцу в группу
   const viaBot = () => inTelegram() && !(tg && tg.initDataUnsafe && tg.initDataUnsafe.query_id);
+  // витрину открыли кнопкой бота в ВК: в ссылке id клиента и подпись — заказ проведёт бот, ответ придёт в ВК
+  const VK = (() => {
+    const q = new URLSearchParams(location.search);
+    let v = { id: q.get("vk") || "", sig: q.get("s") || "" };
+    try {
+      if (v.id && v.sig) sessionStorage.setItem("vk", JSON.stringify(v));
+      else v = JSON.parse(sessionStorage.getItem("vk") || "null") || v;
+    } catch (e) {}
+    return /^\d+$/.test(v.id) && v.sig ? v : null;
+  })();
   let sending = false;
   function placeOrder() {
     if (sending || !validate()) return;
@@ -572,6 +582,7 @@ main { padding-block: 6px 120px; }
     if (!C.order_url) { toast("Это предпросмотр: заказ никуда не отправится."); return; }
     const slot = slotOptions().find(s => s.code === form.slot);
     const body = JSON.stringify({ kind: "site_order", hp: $("i-hp").value, items: Object.entries(cart),
+      vk: VK ? VK.id : "", sig: VK ? VK.sig : "",
       order: { ...order, name, slot_label: slot ? slot.label : "", substitution_label: C.substitutions[form.substitution] || "",
         payment_label: C.payments[form.payment] || "" } });
     const btn = $("placeorder"), was = btn.textContent;
@@ -585,9 +596,11 @@ main { padding-block: 6px 120px; }
         if (!res.ok) return fail(res.error || "Не получилось отправить заказ. Попробуйте ещё раз.");
         const t = total();
         cart = {}; save(); renderList(); renderBar();
-        $("done-title").textContent = `Заказ №${res.id} принят`;
+        const viaVk = res.via === "vk";
+        $("done-title").textContent = viaVk ? "Заказ отправлен" : `Заказ №${res.id} принят`;
         $("done-body").innerHTML = `<div class="done-ic" aria-hidden="true">✓</div>` +
-          `<p>Продавец позвонит вам по номеру <b>${esc(order.phone)}</b>, подтвердит заказ и скажет точную сумму после взвешивания.</p>` +
+          (viaVk ? `<p>Подтверждение придёт в сообщения группы ВКонтакте. Там же согласуем точную сумму после взвешивания.</p>`
+                 : `<p>Продавец позвонит вам по номеру <b>${esc(order.phone)}</b>, подтвердит заказ и скажет точную сумму после взвешивания.</p>`) +
           `<p class="note">Ориентировочно ≈ ${rub(res.estimate || t)}${slot ? ` · доставка ${esc(slot.label.toLowerCase())}` : ""} · оплата у двери</p>`;
         hideSheets(); show("done");
       })
