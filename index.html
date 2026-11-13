@@ -653,6 +653,8 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
         const viaVk = res.via === "vk";
         // заказ из обычного браузера: клиент сам выбирает, где получать сумму — в Telegram или ВК
         const link = /^s\d+_[0-9a-f]{16}$/.test(res.link || "") ? res.link : "";
+        // короткий код «С15-4821» — на случай, если бот не получил метку (бот проверяет его так же)
+        const code = link ? `С${link.slice(1).split("_")[0]}-${String(parseInt(link.split("_")[1].slice(0, 8), 16) % 10000).padStart(4, "0")}` : "";
         const pick = link ? [C.tg_bot && `<a href="https://t.me/${C.tg_bot}?start=${link}" target="_blank" rel="noopener">Telegram</a>`,
           C.vk_group && `<a href="https://vk.me/club${C.vk_group}?ref=${link}" target="_blank" rel="noopener">ВКонтакте</a>`]
           .filter(Boolean).join("") : "";
@@ -663,7 +665,9 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
           `<p class="note">Ориентировочно ≈ ${rub(res.estimate || t)}${slot ? ` · доставка ${esc(slot.label.toLowerCase())}` : ""} · оплата у двери</p>` +
           (pick ? `<p class="ask">Куда прислать сумму и «курьер выехал»?</p>
               <div class="pick">${pick}</div>
-              <p class="note">Откроется чат с нашим ботом — нажмите «Старт» или «Начать». Если не выберете, продавец позвонит по номеру <span style="white-space:nowrap">${esc(order.phone)}</span>.</p>` : "") +
+              <p class="note">Откроется чат с нашим ботом. В Telegram нажмите <b>«Старт»</b>, во ВКонтакте <b>отправьте любое сообщение</b>, например «+».</p>
+              ${code ? `<p class="note">Если бот не ответил, отправьте ему код заказа: <b style="white-space:nowrap;color:var(--fg)">${code}</b></p>` : ""}
+              <p class="note">Не выберете — продавец позвонит по номеру <span style="white-space:nowrap">${esc(order.phone)}</span>.</p>` : "") +
           (subLinks() ? `<p class="note" style="margin-top:8px">Новинки и подарочные наборы — в наших соцсетях:</p><div class="sublinks">${subLinks()}</div>` : "");
         const chat = viaVk && C.vk_group ? `https://vk.me/club${C.vk_group}` : "";
         $("done-chat").hidden = !chat;
