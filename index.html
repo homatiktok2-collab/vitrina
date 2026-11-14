@@ -152,7 +152,9 @@ main { padding-block: 6px 120px; }
 .line .step button { width: 34px; height: 34px; font-size: 19px; }
 .line .step .q { min-width: 54px; height: 34px; font-size: 14px; }
 .sum { padding-block: 12px; display: grid; gap: 6px; font-variant-numeric: tabular-nums; }
-.sum div { display: flex; justify-content: space-between; gap: 12px; }
+.sum > div { display: flex; justify-content: space-between; gap: 12px; min-width: 0; }
+.sum > .upsell { display: grid; }
+.sum > .prog { display: block; }
 .sum .tot { font-size: 18px; font-weight: 800; }
 .note { color: var(--muted); font-size: 13px; }
 .note.warn { color: var(--accent); font-weight: 600; }
@@ -204,6 +206,73 @@ main { padding-block: 6px 120px; }
   .sheet { animation: up .22s ease-out; }
   @keyframes up { from { transform: translateY(40px); opacity: .6; } to { transform: none; opacity: 1; } }
 }
+/* главная: баннеры, плитки категорий, хиты, как заказать */
+.view-h { display: grid; gap: 6px; padding-block: 14px 4px; }
+.view-h h1 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -.015em; text-wrap: balance; }
+.view-h p { margin: 0; color: var(--muted); font-size: 14px; max-width: 60ch; }
+.back { border: 0; background: transparent; color: var(--muted); font-weight: 600; font-size: 14px; padding: 0; justify-self: start; }
+.subs-nav { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 2px; scrollbar-width: none; }
+.subs-nav::-webkit-scrollbar { display: none; }
+.subs-nav button { flex: none; border: 0; background: var(--tile); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.banners { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; padding-block: 12px 4px; scrollbar-width: none; }
+.banners > * { flex: 0 0 84%; }
+.banners::-webkit-scrollbar { display: none; }
+@media (min-width: 620px) { .banners > * { flex-basis: calc((100% - 20px) / 3); } }
+.banner { scroll-snap-align: start; position: relative; min-height: 132px; border: 0; border-radius: 20px; padding: 16px 16px 16px 18px; text-align: left; display: grid; align-content: space-between; gap: 10px; overflow: hidden; color: var(--fg); }
+.banner b { font-size: 19px; font-weight: 800; line-height: 1.15; letter-spacing: -.01em; max-width: 14ch; position: relative; z-index: 1; }
+.banner span { font-size: 13px; color: var(--muted); max-width: 24ch; position: relative; z-index: 1; }
+.banner.has-img b, .banner.has-img span { max-width: 58%; }
+.banner em { font-style: normal; font-weight: 700; font-size: 13px; color: var(--accent); position: relative; z-index: 1; }
+.banner img { position: absolute; right: 6px; bottom: 6px; width: 40%; max-width: 140px; aspect-ratio: 1; height: auto; object-fit: contain; }
+.banner img, .tile img, .giftcard .ph img { mix-blend-mode: multiply; }
+:root[data-theme="dark"] .banner img, :root[data-theme="dark"] .tile img, :root[data-theme="dark"] .giftcard .ph img { mix-blend-mode: normal; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .banner img, :root:not([data-theme="light"]) .tile img, :root:not([data-theme="light"]) .giftcard .ph img { mix-blend-mode: normal; } }
+.banner.b0 { background: var(--s1); } .banner.b1 { background: var(--s2); } .banner.b2 { background: var(--s0); }
+.banner .big { font-size: 40px; font-weight: 800; letter-spacing: -.03em; color: var(--accent); line-height: 1; }
+.block-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 22px 0 12px; }
+.block-h h2 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -.01em; }
+.block-h button { border: 0; background: transparent; color: var(--accent); font-weight: 700; font-size: 14px; padding: 0; white-space: nowrap; }
+.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (min-width: 620px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.tile { position: relative; border: 0; border-radius: 18px; background: var(--tile); padding: 12px; min-height: 128px; text-align: left; display: grid; align-content: start; gap: 2px; overflow: hidden; }
+.tile b { font-size: 15px; font-weight: 700; line-height: 1.2; position: relative; z-index: 1; max-width: 11ch; }
+.tile span { color: var(--muted); font-size: 12px; position: relative; z-index: 1; }
+.tile img { position: absolute; right: -10px; bottom: -10px; width: 92px; height: 92px; object-fit: cover; border-radius: 50%; }
+.tile.gift { grid-column: 1 / -1; min-height: 112px; background: var(--s1); }
+.tile.gift b { max-width: 16ch; font-size: 17px; }
+.tile.gift img { width: 120px; height: 120px; right: 4px; bottom: -14px; border-radius: 0; object-fit: contain; }
+.rowscroll { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: 4px; scrollbar-width: none; }
+.rowscroll > .card { flex: 0 0 42%; }
+.rowscroll::-webkit-scrollbar { display: none; }
+.rowscroll .card { scroll-snap-align: start; }
+@media (min-width: 620px) { .rowscroll > .card { flex-basis: 23%; } }
+.howto { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.howto div { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 12px; display: grid; gap: 4px; align-content: start; min-width: 0; }
+.howto i { font-style: normal; font-weight: 800; color: var(--accent); font-size: 18px; }
+.howto span { font-size: 13px; line-height: 1.3; }
+.terms { margin: 10px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.hitmark { position: absolute; left: 8px; top: 8px; background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 2px 8px; font-size: 11px; font-weight: 700; letter-spacing: .02em; }
+.recent { display: grid; gap: 10px; padding: 14px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); }
+.recent .names { color: var(--muted); font-size: 14px; }
+.recent .cta { margin: 0; height: 46px; font-size: 16px; }
+/* подарочная корзина */
+.giftcard .ph { background: var(--s1); }
+.giftcard .ph img { object-fit: contain; }
+.gbtn { border: 0; border-radius: 999px; background: var(--accent); color: var(--accent-ink); padding: 9px 14px; font-weight: 700; font-size: 15px; }
+.gbtn.on { background: var(--good); }
+.giftinfo { display: grid; gap: 8px; margin-top: 14px; padding: 14px; border-radius: 18px; background: var(--accent-soft); font-size: 14px; line-height: 1.4; }
+.giftinfo b { font-size: 16px; }
+.giftbar { min-width: 0; margin-top: 6px; display: flex; gap: 10px; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 14px; background: var(--accent-soft); font-size: 14px; margin-block: 2px 6px; }
+.giftbar button { border: 0; background: transparent; color: var(--muted); text-decoration: underline; font-size: 13px; padding: 0; }
+.prog { height: 6px; border-radius: 99px; background: var(--tile); overflow: hidden; }
+.prog i { display: block; height: 100%; background: var(--good); border-radius: 99px; }
+.upsell { display: grid; gap: 8px; padding-block: 8px 2px; }
+.upsell b { font-size: 14px; }
+.upsell .row { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+.upsell .row::-webkit-scrollbar { display: none; }
+.upsell button { flex: none; border: 1px solid var(--line); background: var(--bg); border-radius: 12px; padding: 8px 10px; font-size: 13px; text-align: left; display: grid; gap: 2px; max-width: 150px; }
+.upsell button span { color: var(--muted); font-variant-numeric: tabular-nums; }
+.upsell button b { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .done-foot{display:flex;flex-direction:column;gap:8px}
 a.cta{display:flex;align-items:center;justify-content:center;text-decoration:none;margin-block:4px 0}
 .cta.ghost{background:transparent;color:var(--fg,inherit);box-shadow:inset 0 0 0 1.5px var(--line,#ccc)}
@@ -220,10 +289,10 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
     <div class="brand"><b id="shop"></b><span id="zone"></span></div>
     <div class="search">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
-      <input id="q" type="text" placeholder="Найти: яблоки, хурма, халва…" autocomplete="off" enterkeyhint="search" aria-label="Поиск товара">
+      <input id="q" type="text" placeholder="Найти: кешью, хурма, пахлава…" autocomplete="off" enterkeyhint="search" aria-label="Поиск товара">
       <button class="clear" id="qclear" type="button" aria-label="Очистить поиск" hidden>×</button>
     </div>
-    <nav class="chips" id="chips" aria-label="Разделы"></nav>
+    <nav class="chips" id="chips" aria-label="Категории"></nav>
   </div>
 </header>
 
@@ -305,7 +374,7 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
 </section>
 <div class="toast" id="toast" hidden></div>
 
-<script id="data" type="application/json">{"shop": {"name": "Фрукты ягоды", "min_order": 1500, "delivery_fee": 200, "free_from": 3000, "first_order_discount": 0.1}, "catalog_url": "https://docs.google.com/spreadsheets/d/1em0O1--v0GNlda7v4JgPxkIgELoqBs1iBTFIYPEu1YQ/gviz/tq?tqx=out:csv&headers=1&sheet=%D0%92%D0%B8%D1%82%D1%80%D0%B8%D0%BD%D0%B0", "only_with_photos": true, "sections": ["Овощи", "Яблоки и груши", "Цитрусовые", "Хурма, гранат, киви", "Виноград", "Восточные сладости", "Чай"], "checkout": {"houses": ["Барамзиной, 32", "Барамзиной, 32В", "Барамзиной, 38", "Герцена, 4", "Герцена, 4А"], "zone": "ул. Татьяны Барамзиной, 32, 32В, 38 и ул. Герцена, 4, 4А", "shop_address": "ул. Татьяны Барамзиной, 32", "slots": [{"key": "day", "label": "12:00–15:00", "cutoff": 11}, {"key": "evening", "label": "18:00–21:00", "cutoff": 17}], "weekdays": [0, 1, 2, 3, 4, 5, 6], "tz_offset_hours": 5, "substitutions": {"similar": "Заменить на похожее", "remove": "Убрать из заказа", "ask": "Спросить меня"}, "payments": {"card": "Картой", "qr": "По QR"}, "sources": ["Telegram-канал", "Группа VK", "Чат дома", "Листовка", "Яндекс Карты / 2ГИС", "Друзья", "Другое"], "order_url": "https://script.google.com/macros/s/AKfycbz4eRKKta-8yDqdyWJISM5XrW50gQBaQv41EMgVkTSsTf8SNNvB15x2Pc_zGHhVui99Lw/exec", "vk_group": 243116435, "tg_bot": "frukty_yagody_bot", "subscribe": {"vk": "https://vk.com/club243116435", "tg": "https://t.me/fruktperm"}, "shop": {"phone": "+79125955517", "phone_text": "+7 912 595-55-17", "address": "ул. Татьяны Барамзиной, 32", "hours": "10:00–22:00"}}, "photo_files": {"apple_banana": "photos/apple_banana.jpg", "apple_champion": "photos/apple_champion.jpg", "apple_gala": "photos/apple_gala.jpg", "apple_granny": "photos/apple_granny.jpg", "apple_grushovka": "photos/apple_grushovka.jpg", "apple_idared": "photos/apple_idared.jpg", "apple_simirenko": "photos/apple_simirenko.jpg", "apple_vengerka": "photos/apple_vengerka.jpg", "baklava": "photos/baklava.jpg", "baklava_eastern": "photos/baklava_eastern.jpg", "baklava_princess": "photos/baklava_princess.jpg", "baklava_sarma": "photos/baklava_sarma.jpg", "cucumber": "photos/cucumber.jpg", "eggplant": "photos/eggplant.jpg", "feijoa": "photos/feijoa.jpg", "ginger": "photos/ginger.jpg", "grape_kishmish_black": "photos/grape_kishmish_black.jpg", "grape_kishmish_pink": "photos/grape_kishmish_pink.jpg", "grape_kishmish_white": "photos/grape_kishmish_white.jpg", "grape_ladyfinger": "photos/grape_ladyfinger.jpg", "grape_lidia": "photos/grape_lidia.jpg", "grape_taifi": "photos/grape_taifi.jpg", "halva": "photos/halva.jpg", "halva_pashmak": "photos/halva_pashmak.jpg", "halva_pashmak_assorti": "photos/halva_pashmak_assorti.jpg", "halva_pashmak_pistachio": "photos/halva_pashmak_pistachio.jpg", "kadaif": "photos/kadaif.jpg", "kadaif_burma": "photos/kadaif_burma.jpg", "kadaif_nuts": "photos/kadaif_nuts.jpg", "kiwi_iran": "photos/kiwi_iran.jpg", "kiwi_peru": "photos/kiwi_peru.jpg", "lemon_turkey": "photos/lemon_turkey.jpg", "lemon_uzbek": "photos/lemon_uzbek.jpg", "mandarin_abkhazia": "photos/mandarin_abkhazia.jpg", "mandarin_baby": "photos/mandarin_baby.jpg", "mandarin_leaves": "photos/mandarin_leaves.jpg", "mandarin_peru": "photos/mandarin_peru.jpg", "mango_egypt": "photos/mango_egypt.jpg", "mulled_wine_set": "photos/mulled_wine_set.jpg", "orange": "photos/orange.jpg", "orange_morocco": "photos/orange_morocco.jpg", "pear_conference": "photos/pear_conference.jpg", "pepper_hot": "photos/pepper_hot.jpg", "pepper_red": "photos/pepper_red.jpg", "persimmon_dried": "photos/persimmon_dried.jpg", "persimmon_honey": "photos/persimmon_honey.jpg", "persimmon_korolek": "photos/persimmon_korolek.jpg", "persimmon_romashka": "photos/persimmon_romashka.jpg", "plum_iran": "photos/plum_iran.jpg", "plum_prune": "photos/plum_prune.jpg", "pomegranate_az": "photos/pomegranate_az.jpg", "pomegranate_peru": "photos/pomegranate_peru.jpg", "pomegranate_seedless": "photos/pomegranate_seedless.jpg", "star_anise": "photos/star_anise.jpg", "strawberry": "photos/strawberry.jpg", "tea_aroma": "photos/tea_aroma.jpg", "tea_buket": "photos/tea_buket.jpg", "tea_classic_green": "photos/tea_classic_green.jpg", "tea_forest_berries": "photos/tea_forest_berries.jpg", "tea_granulated": "photos/tea_granulated.jpg", "tea_green_garden": "photos/tea_green_garden.jpg", "tea_mango": "photos/tea_mango.jpg", "tea_strawberry": "photos/tea_strawberry.jpg", "tea_super_pekoe": "photos/tea_super_pekoe.jpg", "tomato_cherry": "photos/tomato_cherry.jpg", "tomato_cherry_yellow": "photos/tomato_cherry_yellow.jpg", "tomato_pink": "photos/tomato_pink.jpg", "tomato_plum": "photos/tomato_plum.jpg", "zucchini": "photos/zucchini.jpg"}, "items": [{"code": "tomato_cherry", "title": "Помидор черри красный", "desc": "", "price": 450, "unit": "кг", "section": "Овощи", "photo": "photos/tomato_cherry.jpg"}, {"code": "tomato_plum", "title": "Помидор сливка", "desc": "", "price": 250, "unit": "кг", "section": "Овощи", "photo": "photos/tomato_plum.jpg"}, {"code": "tomato_cherry_yellow", "title": "Помидор черри жёлтый", "desc": "", "price": 450, "unit": "кг", "section": "Овощи", "photo": "photos/tomato_cherry_yellow.jpg"}, {"code": "tomato_pink", "title": "Помидор розовый Азербайджан", "desc": "", "price": 350, "unit": "кг", "section": "Овощи", "photo": "photos/tomato_pink.jpg"}, {"code": "cucumber", "title": "Огурцы Леро", "desc": "", "price": 480, "unit": "кг", "section": "Овощи", "photo": "photos/cucumber.jpg"}, {"code": "zucchini", "title": "Кабачок", "desc": "", "price": 220, "unit": "кг", "section": "Овощи", "photo": "photos/zucchini.jpg"}, {"code": "eggplant", "title": "Баклажан", "desc": "", "price": 220, "unit": "кг", "section": "Овощи", "photo": "photos/eggplant.jpg"}, {"code": "pepper_red", "title": "Перец красный", "desc": "", "price": 365, "unit": "кг", "section": "Овощи", "photo": "photos/pepper_red.jpg"}, {"code": "pepper_hot", "title": "Перец капи острый", "desc": "", "price": 425, "unit": "кг", "section": "Овощи", "photo": "photos/pepper_hot.jpg"}, {"code": "ginger", "title": "Имбирь", "desc": "", "price": 700, "unit": "кг", "section": "Овощи", "photo": "photos/ginger.jpg"}, {"code": "apple_vengerka", "title": "Яблоко Венгерка", "desc": "", "price": 150, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_vengerka.jpg"}, {"code": "apple_gala", "title": "Яблоко Гала", "desc": "", "price": 150, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_gala.jpg"}, {"code": "apple_simirenko", "title": "Яблоко Симеринка", "desc": "", "price": 150, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_simirenko.jpg"}, {"code": "apple_idared", "title": "Яблоко Айдарэд", "desc": "", "price": 155, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_idared.jpg"}, {"code": "apple_grushovka", "title": "Яблоко Грушовка", "desc": "", "price": 165, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_grushovka.jpg"}, {"code": "apple_granny", "title": "Яблоко Гренни Смит", "desc": "", "price": 165, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_granny.jpg"}, {"code": "apple_champion", "title": "Яблоко Чемпион", "desc": "", "price": 175, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_champion.jpg"}, {"code": "apple_banana", "title": "Яблоко банановое", "desc": "", "price": 250, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_banana.jpg"}, {"code": "pear_conference", "title": "Груша Конференция", "desc": "", "price": 450, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/pear_conference.jpg"}, {"code": "mandarin_leaves", "title": "Мандарин с листьями", "desc": "", "price": 255, "unit": "кг", "section": "Цитрусовые", "photo": "photos/mandarin_leaves.jpg"}, {"code": "mandarin_abkhazia", "title": "Мандарин Абхазия", "desc": "", "price": 300, "unit": "кг", "section": "Цитрусовые", "photo": "photos/mandarin_abkhazia.jpg"}, {"code": "mandarin_baby", "title": "Мандарин Бейби", "desc": "", "price": 315, "unit": "кг", "section": "Цитрусовые", "photo": "photos/mandarin_baby.jpg"}, {"code": "mandarin_peru", "title": "Мандарин Перу", "desc": "", "price": 350, "unit": "кг", "section": "Цитрусовые", "photo": "photos/mandarin_peru.jpg"}, {"code": "orange", "title": "Апельсин", "desc": "", "price": 250, "unit": "кг", "section": "Цитрусовые", "photo": "photos/orange.jpg"}, {"code": "orange_morocco", "title": "Апельсин Марокко", "desc": "", "price": 300, "unit": "кг", "section": "Цитрусовые", "photo": "photos/orange_morocco.jpg"}, {"code": "lemon_turkey", "title": "Лимон Турция", "desc": "", "price": 350, "unit": "кг", "section": "Цитрусовые", "photo": "photos/lemon_turkey.jpg"}, {"code": "lemon_uzbek", "title": "Лимон Узбекистан", "desc": "", "price": 750, "unit": "кг", "section": "Цитрусовые", "photo": "photos/lemon_uzbek.jpg"}, {"code": "persimmon_romashka", "title": "Хурма Ромашка", "desc": "", "price": 195, "unit": "кг", "section": "Хурма, гранат, киви", "photo": "photos/persimmon_romashka.jpg"}, {"code": "persimmon_korolek", "title": "Хурма Королёк", "desc": "", "price": 195, "unit": "кг", "section": "Хурма, гранат, киви", "photo": "photos/persimmon_korolek.jpg"}, {"code": "persimmon_honey", "title": "Хурма медовая", "desc": "", "price": 245, "unit": "кг", "section": "Хурма, гранат, киви", "photo": "photos/persimmon_honey.jpg"}, {"code": "pomegranate_az", "title": "Гранат Азербайджан", "desc": "", "price": 350, "unit": "кг", "section": "Хурма, гранат, киви", "photo": "photos/pomegranate_az.jpg"}, {"code": "pomegranate_peru", "title": "Гранат Перу", "desc": "", "price": 380, "unit": "кг", "section": "Хурма, гранат, киви", "photo": "photos/pomegranate_peru.jpg"}, {"code": "pomegranate_seedless", "title": "Гранат без косточек", "desc": "", "price": 520, "unit": "кг", "section": "Хурма, гранат, киви", "photo": "photos/pomegranate_seedless.jpg"}, {"code": "kiwi_iran", "title": "Киви Иран", "desc": "", "price": 185, "unit": "кг", "section": "Хурма, гранат, киви", "photo": "photos/kiwi_iran.jpg"}, {"code": "kiwi_peru", "title": "Киви Перу", "desc": "", "price": 270, "unit": "кг", "section": "Хурма, гранат, киви", "photo": "photos/kiwi_peru.jpg"}, {"code": "feijoa", "title": "Фейхоа", "desc": "", "price": 370, "unit": "кг", "section": "Хурма, гранат, киви", "photo": "photos/feijoa.jpg"}, {"code": "mango_egypt", "title": "Манго Египет", "desc": "Цена за 1 шт", "price": 250, "unit": "шт", "section": "Хурма, гранат, киви", "photo": "photos/mango_egypt.jpg"}, {"code": "plum_iran", "title": "Слива Иран", "desc": "", "price": 275, "unit": "кг", "section": "Хурма, гранат, киви", "photo": "photos/plum_iran.jpg"}, {"code": "plum_prune", "title": "Чернослив", "desc": "", "price": 395, "unit": "кг", "section": "Хурма, гранат, киви", "photo": "photos/plum_prune.jpg"}, {"code": "grape_taifi", "title": "Тайфи", "desc": "Виноград", "price": 235, "unit": "кг", "section": "Виноград", "photo": "photos/grape_taifi.jpg"}, {"code": "grape_lidia", "title": "Виноград Лидия", "desc": "", "price": 250, "unit": "кг", "section": "Виноград", "photo": "photos/grape_lidia.jpg"}, {"code": "grape_kishmish_black", "title": "Киш-миш", "desc": "Виноград тёмный", "price": 350, "unit": "кг", "section": "Виноград", "photo": "photos/grape_kishmish_black.jpg"}, {"code": "grape_ladyfinger", "title": "Виноград Дамские пальчики", "desc": "", "price": 350, "unit": "кг", "section": "Виноград", "photo": "photos/grape_ladyfinger.jpg"}, {"code": "grape_kishmish_pink", "title": "Киш-миш розовый", "desc": "Виноград", "price": 355, "unit": "кг", "section": "Виноград", "photo": "photos/grape_kishmish_pink.jpg"}, {"code": "grape_kishmish_white", "title": "Виноград Киш-миш", "desc": "", "price": 420, "unit": "кг", "section": "Виноград", "photo": "photos/grape_kishmish_white.jpg"}, {"code": "baklava", "title": "Пахлава домашняя", "desc": "200 ₽ за 100 г", "price": 2000, "unit": "кг", "section": "Восточные сладости", "photo": "photos/baklava.jpg"}, {"code": "halva", "title": "Халва", "desc": "", "price": 600, "unit": "кг", "section": "Восточные сладости", "photo": "photos/halva.jpg"}, {"code": "halva_pashmak", "title": "Халва Пашмак", "desc": "Цена за 1 шт", "price": 300, "unit": "шт", "section": "Восточные сладости", "photo": "photos/halva_pashmak.jpg"}, {"code": "kadaif", "title": "Кадаиф", "desc": "Цена за 1 шт", "price": 600, "unit": "шт", "section": "Восточные сладости", "photo": "photos/kadaif.jpg"}, {"code": "tea_aroma", "title": "Азерчай с ароматом", "desc": "Цена за упаковку", "price": 250, "unit": "шт", "section": "Чай", "photo": "photos/tea_aroma.jpg"}, {"code": "tea_green_garden", "title": "Азерчай Зелёный сад", "desc": "Цена за упаковку", "price": 105, "unit": "шт", "section": "Чай", "photo": "photos/tea_green_garden.jpg"}]}</script>
+<script id="data" type="application/json">{"shop": {"name": "Фрукты ягоды", "min_order": 1500, "delivery_fee": 200, "free_from": 3000, "first_order_discount": 0.1}, "catalog_url": "https://docs.google.com/spreadsheets/d/1em0O1--v0GNlda7v4JgPxkIgELoqBs1iBTFIYPEu1YQ/gviz/tq?tqx=out:csv&headers=1&sheet=%D0%92%D0%B8%D1%82%D1%80%D0%B8%D0%BD%D0%B0", "only_with_photos": true, "sections": ["Овощи", "Яблоки и груши", "Цитрусовые", "Экзотика и сезонное", "Виноград", "Восточные сладости", "Чай", "Подарочные корзины"], "checkout": {"houses": ["Барамзиной, 32", "Барамзиной, 32В", "Барамзиной, 38", "Герцена, 4", "Герцена, 4А"], "zone": "ул. Татьяны Барамзиной, 32, 32В, 38 и ул. Герцена, 4, 4А", "shop_address": "ул. Татьяны Барамзиной, 32", "slots": [{"key": "day", "label": "12:00–15:00", "cutoff": 11}, {"key": "evening", "label": "18:00–21:00", "cutoff": 17}], "weekdays": [0, 1, 2, 3, 4, 5, 6], "tz_offset_hours": 5, "substitutions": {"similar": "Заменить на похожее", "remove": "Убрать из заказа", "ask": "Спросить меня"}, "payments": {"card": "Картой", "qr": "По QR"}, "sources": ["Telegram-канал", "Группа VK", "Чат дома", "Листовка", "Яндекс Карты / 2ГИС", "Друзья", "Другое"], "order_url": "https://script.google.com/macros/s/AKfycbz4eRKKta-8yDqdyWJISM5XrW50gQBaQv41EMgVkTSsTf8SNNvB15x2Pc_zGHhVui99Lw/exec", "vk_group": 243116435, "tg_bot": "frukty_yagody_bot", "subscribe": {"vk": "https://vk.com/club243116435", "tg": "https://t.me/fruktperm"}, "gift_min": 3800, "shop": {"phone": "+79125955517", "phone_text": "+7 912 595-55-17", "address": "ул. Татьяны Барамзиной, 32", "hours": "10:00–22:00"}}, "photo_files": {"almond_raw": "photos/almond_raw.jpg", "almond_roasted_shell": "photos/almond_roasted_shell.jpg", "apple_banana": "photos/apple_banana.jpg", "apple_champion": "photos/apple_champion.jpg", "apple_gala": "photos/apple_gala.jpg", "apple_granny": "photos/apple_granny.jpg", "apple_grushovka": "photos/apple_grushovka.jpg", "apple_idared": "photos/apple_idared.jpg", "apple_simirenko": "photos/apple_simirenko.jpg", "apple_vengerka": "photos/apple_vengerka.jpg", "apricot_kernel": "photos/apricot_kernel.jpg", "baklava": "photos/baklava.jpg", "baklava_eastern": "photos/baklava_eastern.jpg", "baklava_princess": "photos/baklava_princess.jpg", "baklava_sarma": "photos/baklava_sarma.jpg", "brazil_nut": "photos/brazil_nut.jpg", "cabbage": "photos/cabbage.jpg", "carrot": "photos/carrot.jpg", "cashew_medium": "photos/cashew_medium.jpg", "cashew_premium": "photos/cashew_premium.jpg", "cashew_roasted": "photos/cashew_roasted.jpg", "cucumber": "photos/cucumber.jpg", "eggplant": "photos/eggplant.jpg", "feijoa": "photos/feijoa.jpg", "gift_basket": "photos/gift_basket.jpg", "gift_basket_custom": "photos/gift_basket_custom.jpg", "ginger": "photos/ginger.jpg", "grape_kishmish_black": "photos/grape_kishmish_black.jpg", "grape_kishmish_pink": "photos/grape_kishmish_pink.jpg", "grape_kishmish_white": "photos/grape_kishmish_white.jpg", "grape_ladyfinger": "photos/grape_ladyfinger.jpg", "grape_lidia": "photos/grape_lidia.jpg", "grape_taifi": "photos/grape_taifi.jpg", "halva": "photos/halva.jpg", "halva_pashmak": "photos/halva_pashmak.jpg", "halva_pashmak_assorti": "photos/halva_pashmak_assorti.jpg", "halva_pashmak_pistachio": "photos/halva_pashmak_pistachio.jpg", "hazelnut": "photos/hazelnut.jpg", "hazelnut_fresh": "photos/hazelnut_fresh.jpg", "kadaif": "photos/kadaif.jpg", "kadaif_burma": "photos/kadaif_burma.jpg", "kadaif_nuts": "photos/kadaif_nuts.jpg", "kiwi_iran": "photos/kiwi_iran.jpg", "kiwi_peru": "photos/kiwi_peru.jpg", "lemon_turkey": "photos/lemon_turkey.jpg", "lemon_uzbek": "photos/lemon_uzbek.jpg", "macadamia_large": "photos/macadamia_large.jpg", "macadamia_medium": "photos/macadamia_medium.jpg", "mandarin_abkhazia": "photos/mandarin_abkhazia.jpg", "mandarin_baby": "photos/mandarin_baby.jpg", "mandarin_leaves": "photos/mandarin_leaves.jpg", "mandarin_peru": "photos/mandarin_peru.jpg", "mango_egypt": "photos/mango_egypt.jpg", "mulled_wine_set": "photos/mulled_wine_set.jpg", "onion_crimean": "photos/onion_crimean.jpg", "onion_red": "photos/onion_red.jpg", "onion_white": "photos/onion_white.jpg", "onion_yellow": "photos/onion_yellow.jpg", "orange": "photos/orange.jpg", "orange_morocco": "photos/orange_morocco.jpg", "peanut_premium": "photos/peanut_premium.jpg", "peanut_red": "photos/peanut_red.jpg", "peanut_salted": "photos/peanut_salted.jpg", "pear_conference": "photos/pear_conference.jpg", "pecan": "photos/pecan.jpg", "pepper_hot": "photos/pepper_hot.jpg", "pepper_red": "photos/pepper_red.jpg", "persimmon_dried": "photos/persimmon_dried.jpg", "persimmon_honey": "photos/persimmon_honey.jpg", "persimmon_korolek": "photos/persimmon_korolek.jpg", "persimmon_romashka": "photos/persimmon_romashka.jpg", "pine_nut": "photos/pine_nut.jpg", "pine_nut_pack": "photos/pine_nut_pack.jpg", "pineapple": "photos/pineapple.jpg", "pistachio_salted": "photos/pistachio_salted.jpg", "pistachio_turkish": "photos/pistachio_turkish.jpg", "pistachio_unsalted": "photos/pistachio_unsalted.jpg", "plum_iran": "photos/plum_iran.jpg", "plum_prune": "photos/plum_prune.jpg", "pomegranate_az": "photos/pomegranate_az.jpg", "pomegranate_peru": "photos/pomegranate_peru.jpg", "pomegranate_seedless": "photos/pomegranate_seedless.jpg", "potato": "photos/potato.jpg", "pumpkin_seeds": "photos/pumpkin_seeds.jpg", "pumpkin_seeds_shell": "photos/pumpkin_seeds_shell.jpg", "star_anise": "photos/star_anise.jpg", "strawberry": "photos/strawberry.jpg", "sunflower_seeds": "photos/sunflower_seeds.jpg", "tea_aroma": "photos/tea_aroma.jpg", "tea_buket": "photos/tea_buket.jpg", "tea_classic_green": "photos/tea_classic_green.jpg", "tea_forest_berries": "photos/tea_forest_berries.jpg", "tea_granulated": "photos/tea_granulated.jpg", "tea_green_garden": "photos/tea_green_garden.jpg", "tea_mango": "photos/tea_mango.jpg", "tea_strawberry": "photos/tea_strawberry.jpg", "tea_super_pekoe": "photos/tea_super_pekoe.jpg", "tomato_cherry": "photos/tomato_cherry.jpg", "tomato_cherry_yellow": "photos/tomato_cherry_yellow.jpg", "tomato_pink": "photos/tomato_pink.jpg", "tomato_plum": "photos/tomato_plum.jpg", "walnut_chile": "photos/walnut_chile.jpg", "walnut_chile_kernel": "photos/walnut_chile_kernel.jpg", "walnut_long": "photos/walnut_long.jpg", "walnut_torpedo": "photos/walnut_torpedo.jpg", "zucchini": "photos/zucchini.jpg"}, "items": [{"code": "tomato_cherry", "title": "Помидор черри красный", "desc": "", "price": 450, "unit": "кг", "section": "Овощи", "photo": "photos/tomato_cherry.jpg", "per100": false, "hit": false}, {"code": "tomato_cherry_yellow", "title": "Помидор черри жёлтый", "desc": "", "price": 450, "unit": "кг", "section": "Овощи", "photo": "photos/tomato_cherry_yellow.jpg", "per100": false, "hit": false}, {"code": "tomato_plum", "title": "Помидор сливка", "desc": "", "price": 250, "unit": "кг", "section": "Овощи", "photo": "photos/tomato_plum.jpg", "per100": false, "hit": false}, {"code": "tomato_pink", "title": "Помидор розовый Азербайджан", "desc": "", "price": 350, "unit": "кг", "section": "Овощи", "photo": "photos/tomato_pink.jpg", "per100": false, "hit": false}, {"code": "cucumber", "title": "Огурцы Леро", "desc": "", "price": 480, "unit": "кг", "section": "Овощи", "photo": "photos/cucumber.jpg", "per100": false, "hit": false}, {"code": "zucchini", "title": "Кабачок", "desc": "", "price": 220, "unit": "кг", "section": "Овощи", "photo": "photos/zucchini.jpg", "per100": false, "hit": false}, {"code": "eggplant", "title": "Баклажан", "desc": "", "price": 220, "unit": "кг", "section": "Овощи", "photo": "photos/eggplant.jpg", "per100": false, "hit": false}, {"code": "pepper_red", "title": "Перец красный", "desc": "", "price": 365, "unit": "кг", "section": "Овощи", "photo": "photos/pepper_red.jpg", "per100": false, "hit": false}, {"code": "pepper_hot", "title": "Перец капи острый", "desc": "", "price": 425, "unit": "кг", "section": "Овощи", "photo": "photos/pepper_hot.jpg", "per100": false, "hit": false}, {"code": "ginger", "title": "Имбирь", "desc": "", "price": 700, "unit": "кг", "section": "Овощи", "photo": "photos/ginger.jpg", "per100": false, "hit": false}, {"code": "apple_vengerka", "title": "Яблоко Венгерка", "desc": "", "price": 150, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_vengerka.jpg", "per100": false, "hit": false}, {"code": "apple_gala", "title": "Яблоко Гала", "desc": "", "price": 150, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_gala.jpg", "per100": false, "hit": false}, {"code": "apple_simirenko", "title": "Яблоко Симеринка", "desc": "", "price": 150, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_simirenko.jpg", "per100": false, "hit": false}, {"code": "apple_idared", "title": "Яблоко Айдарэд", "desc": "", "price": 155, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_idared.jpg", "per100": false, "hit": false}, {"code": "apple_grushovka", "title": "Яблоко Грушовка", "desc": "", "price": 165, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_grushovka.jpg", "per100": false, "hit": false}, {"code": "apple_granny", "title": "Яблоко Гренни Смит", "desc": "", "price": 165, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_granny.jpg", "per100": false, "hit": false}, {"code": "apple_champion", "title": "Яблоко Чемпион", "desc": "", "price": 175, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_champion.jpg", "per100": false, "hit": false}, {"code": "apple_banana", "title": "Яблоко банановое", "desc": "", "price": 250, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/apple_banana.jpg", "per100": false, "hit": false}, {"code": "pear_conference", "title": "Груша Конференция", "desc": "", "price": 450, "unit": "кг", "section": "Яблоки и груши", "photo": "photos/pear_conference.jpg", "per100": false, "hit": false}, {"code": "mandarin_leaves", "title": "Мандарин с листьями", "desc": "", "price": 255, "unit": "кг", "section": "Цитрусовые", "photo": "photos/mandarin_leaves.jpg", "per100": false, "hit": true}, {"code": "mandarin_abkhazia", "title": "Мандарин Абхазия", "desc": "", "price": 300, "unit": "кг", "section": "Цитрусовые", "photo": "photos/mandarin_abkhazia.jpg", "per100": false, "hit": false}, {"code": "mandarin_baby", "title": "Мандарин Бейби", "desc": "", "price": 315, "unit": "кг", "section": "Цитрусовые", "photo": "photos/mandarin_baby.jpg", "per100": false, "hit": false}, {"code": "mandarin_peru", "title": "Мандарин Перу", "desc": "", "price": 350, "unit": "кг", "section": "Цитрусовые", "photo": "photos/mandarin_peru.jpg", "per100": false, "hit": false}, {"code": "orange", "title": "Апельсин", "desc": "", "price": 250, "unit": "кг", "section": "Цитрусовые", "photo": "photos/orange.jpg", "per100": false, "hit": false}, {"code": "orange_morocco", "title": "Апельсин Марокко", "desc": "", "price": 300, "unit": "кг", "section": "Цитрусовые", "photo": "photos/orange_morocco.jpg", "per100": false, "hit": false}, {"code": "lemon_turkey", "title": "Лимон Турция", "desc": "", "price": 350, "unit": "кг", "section": "Цитрусовые", "photo": "photos/lemon_turkey.jpg", "per100": false, "hit": false}, {"code": "lemon_uzbek", "title": "Лимон Узбекистан", "desc": "", "price": 750, "unit": "кг", "section": "Цитрусовые", "photo": "photos/lemon_uzbek.jpg", "per100": false, "hit": false}, {"code": "persimmon_romashka", "title": "Хурма Ромашка", "desc": "", "price": 195, "unit": "кг", "section": "Экзотика и сезонное", "photo": "photos/persimmon_romashka.jpg", "per100": false, "hit": false}, {"code": "persimmon_korolek", "title": "Хурма Королёк", "desc": "", "price": 195, "unit": "кг", "section": "Экзотика и сезонное", "photo": "photos/persimmon_korolek.jpg", "per100": false, "hit": true}, {"code": "persimmon_honey", "title": "Хурма медовая", "desc": "", "price": 245, "unit": "кг", "section": "Экзотика и сезонное", "photo": "photos/persimmon_honey.jpg", "per100": false, "hit": false}, {"code": "pomegranate_az", "title": "Гранат Азербайджан", "desc": "", "price": 350, "unit": "кг", "section": "Экзотика и сезонное", "photo": "photos/pomegranate_az.jpg", "per100": false, "hit": false}, {"code": "pomegranate_peru", "title": "Гранат Перу", "desc": "", "price": 380, "unit": "кг", "section": "Экзотика и сезонное", "photo": "photos/pomegranate_peru.jpg", "per100": false, "hit": true}, {"code": "pomegranate_seedless", "title": "Гранат без косточек", "desc": "", "price": 520, "unit": "кг", "section": "Экзотика и сезонное", "photo": "photos/pomegranate_seedless.jpg", "per100": false, "hit": false}, {"code": "kiwi_iran", "title": "Киви Иран", "desc": "", "price": 185, "unit": "кг", "section": "Экзотика и сезонное", "photo": "photos/kiwi_iran.jpg", "per100": false, "hit": false}, {"code": "kiwi_peru", "title": "Киви Перу", "desc": "", "price": 270, "unit": "кг", "section": "Экзотика и сезонное", "photo": "photos/kiwi_peru.jpg", "per100": false, "hit": false}, {"code": "feijoa", "title": "Фейхоа", "desc": "", "price": 370, "unit": "кг", "section": "Экзотика и сезонное", "photo": "photos/feijoa.jpg", "per100": false, "hit": true}, {"code": "mango_egypt", "title": "Манго Египет", "desc": "Цена за 1 шт", "price": 250, "unit": "шт", "section": "Экзотика и сезонное", "photo": "photos/mango_egypt.jpg", "per100": false, "hit": true}, {"code": "plum_iran", "title": "Слива Иран", "desc": "", "price": 275, "unit": "кг", "section": "Экзотика и сезонное", "photo": "photos/plum_iran.jpg", "per100": false, "hit": false}, {"code": "plum_prune", "title": "Чернослив", "desc": "", "price": 395, "unit": "кг", "section": "Экзотика и сезонное", "photo": "photos/plum_prune.jpg", "per100": false, "hit": false}, {"code": "grape_taifi", "title": "Тайфи", "desc": "Виноград", "price": 235, "unit": "кг", "section": "Виноград", "photo": "photos/grape_taifi.jpg", "per100": false, "hit": false}, {"code": "grape_lidia", "title": "Виноград Лидия", "desc": "", "price": 250, "unit": "кг", "section": "Виноград", "photo": "photos/grape_lidia.jpg", "per100": false, "hit": false}, {"code": "grape_kishmish_black", "title": "Киш-миш", "desc": "Виноград тёмный", "price": 350, "unit": "кг", "section": "Виноград", "photo": "photos/grape_kishmish_black.jpg", "per100": false, "hit": false}, {"code": "grape_ladyfinger", "title": "Виноград Дамские пальчики", "desc": "", "price": 350, "unit": "кг", "section": "Виноград", "photo": "photos/grape_ladyfinger.jpg", "per100": false, "hit": false}, {"code": "grape_kishmish_pink", "title": "Киш-миш розовый", "desc": "Виноград", "price": 355, "unit": "кг", "section": "Виноград", "photo": "photos/grape_kishmish_pink.jpg", "per100": false, "hit": false}, {"code": "grape_kishmish_white", "title": "Виноград Киш-миш", "desc": "", "price": 420, "unit": "кг", "section": "Виноград", "photo": "photos/grape_kishmish_white.jpg", "per100": false, "hit": true}, {"code": "baklava", "title": "Пахлава домашняя", "desc": "200 ₽ за 100 г", "price": 2000, "unit": "кг", "section": "Восточные сладости", "photo": "photos/baklava.jpg", "per100": false, "hit": true}, {"code": "halva", "title": "Халва", "desc": "", "price": 600, "unit": "кг", "section": "Восточные сладости", "photo": "photos/halva.jpg", "per100": false, "hit": false}, {"code": "halva_pashmak", "title": "Халва Пашмак", "desc": "Цена за 1 шт", "price": 300, "unit": "шт", "section": "Восточные сладости", "photo": "photos/halva_pashmak.jpg", "per100": false, "hit": false}, {"code": "kadaif", "title": "Кадаиф", "desc": "Цена за 1 шт", "price": 600, "unit": "шт", "section": "Восточные сладости", "photo": "photos/kadaif.jpg", "per100": false, "hit": false}, {"code": "tea_aroma", "title": "Азерчай с ароматом", "desc": "Цена за упаковку", "price": 250, "unit": "шт", "section": "Чай", "photo": "photos/tea_aroma.jpg", "per100": false, "hit": false}, {"code": "tea_green_garden", "title": "Азерчай Зелёный сад", "desc": "Цена за упаковку", "price": 105, "unit": "шт", "section": "Чай", "photo": "photos/tea_green_garden.jpg", "per100": false, "hit": false}, {"code": "gift_basket", "title": "Подарочная корзина «Как на фото»", "desc": "Готовая корзина: гранаты, мандарины с листьями, киви, клубника, виноград, хурма вяленая, пахлава и макадамия. Корзина, упаковка и бант в подарок. Соберём в день заказа", "price": 3800, "unit": "шт", "section": "Подарочные корзины", "photo": "photos/gift_basket.jpg", "per100": false, "hit": true}, {"code": "pineapple", "title": "Ананас", "desc": "Цена за 1 шт", "price": 2000, "unit": "шт", "section": "Экзотика и сезонное", "photo": "photos/pineapple.jpg", "per100": false, "hit": true}]}</script>
 <script>
 (() => {
   const DATA = JSON.parse(document.getElementById("data").textContent);
@@ -314,6 +383,19 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
   const PHOTOS = { ...(DATA.photo_files || {}), ...Object.fromEntries(DATA.items.filter(p => p.photo).map(p => [p.code, p.photo])) };
   const BUILT = new Set(DATA.items.map(p => p.code));
   let ITEMS = [], SECTIONS = [], byCode = {};
+  // категории витрины: разделы из таблицы («Раздел») собираем в понятные группы
+  const CATS = [
+    { key: "gift", name: "Подарочные корзины", sections: ["Подарочные корзины"] },
+    { key: "fruit", name: "Фрукты", sections: ["Экзотика и сезонное", "Хурма, гранат, киви", "Цитрусовые", "Яблоки и груши"] },
+    { key: "berry", name: "Ягоды и виноград", sections: ["Ягоды", "Виноград"] },
+    { key: "veg", name: "Овощи", sections: ["Овощи"] },
+    { key: "nuts", name: "Орехи и семечки", sections: ["Орехи (ядра)", "Орехи в скорлупе", "Семечки"] },
+    { key: "sweet", name: "Восточные сладости", sections: ["Восточные сладости"] },
+    { key: "tea", name: "Чай, сухофрукты, специи", sections: ["Чай", "Сухофрукты и специи"] },
+  ];
+  const catOf = section => (CATS.find(c => c.sections.includes(section)) || { key: "other" }).key;
+  const catName = key => (CATS.find(c => c.key === key) || { name: "Другое" }).name;
+  const GIFT_MIN = (DATA.checkout && DATA.checkout.gift_min) || 3800;
   const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   function applyItems(items) {
     // пока фото готовы не у всех — показываем только товары с фото (ONLY_WITH_PHOTOS в настройках бота)
@@ -321,7 +403,10 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
     ITEMS = items.map(p => ({ ...p,
       // фото: ссылка из таблицы → файл рядом со страницей → для нового товара пробуем photos/<код>.jpg
       photo: /^https?:\/\//.test(p.photo || "") ? p.photo : PHOTOS[p.code] || (BUILT.has(p.code) ? "" : `photos/${p.code}.jpg`) }));
-    SECTIONS = [...new Set(ITEMS.map(p => p.section))];
+    // разделы — в порядке категорий, внутри категории — как в CATS, остальные в конце
+    const rank = s => { const i = CATS.findIndex(c => c.sections.includes(s)); return i < 0 ? 99 : i * 10 + CATS[i].sections.indexOf(s); };
+    SECTIONS = [...new Set(ITEMS.map(p => p.section))].sort((a, b) => rank(a) - rank(b));
+    ITEMS.forEach(p => p.cat = catOf(p.section));
     byCode = Object.fromEntries(ITEMS.map(p => [p.code, p]));
   }
   applyItems(DATA.items);
@@ -353,8 +438,8 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
       if (inTelegram()) document.documentElement.dataset.theme = tg.colorScheme === "dark" ? "dark" : "light";
       const bg = getComputedStyle(document.body).backgroundColor;
       tg.setHeaderColor && tg.setHeaderColor(bg); tg.setBackgroundColor && tg.setBackgroundColor(bg);
-      tg.BackButton.onClick(hideSheets);
-      if (openSheet) tg.BackButton.show();
+      tg.BackButton.onClick(goBack);
+      syncBack();
     } catch (e) {}
   }
   if (launchedFromTelegram) { try { postEvent("web_app_ready", {}); postEvent("web_app_expand", {}); } catch (e) {} }
@@ -363,10 +448,14 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
   // ---------- деньги и количество ----------
   const rub = n => Math.round(n).toLocaleString("ru-RU").replace(/ | /g, " ") + " ₽";
   const byWeight = p => p.unit === "кг";
-  const fmtQty = (p, q) => byWeight(p) ? String(+q.toFixed(2)).replace(".", ",") + " кг" : q + " шт";
-  const first = p => byWeight(p) ? (p.price >= 600 ? 0.3 : 1) : 1;
-  const stepOf = p => byWeight(p) ? (p.price >= 600 ? 0.1 : 0.5) : 1;
-  const priceText = p => byWeight(p) ? rub(p.price) + "/кг" : rub(p.price);
+  // орехи и семечки: в таблице цена «за 100 г», внутри считаем в кг, покупателю показываем граммы
+  const fmtQty = (p, q) => p.per100 && q < 1 ? Math.round(q * 1000) + " г"
+    : byWeight(p) ? String(+q.toFixed(2)).replace(".", ",") + " кг" : q + " шт";
+  const first = p => p.per100 ? 0.2 : byWeight(p) ? (p.price >= 600 ? 0.3 : 1) : 1;
+  const stepOf = p => p.per100 ? 0.1 : byWeight(p) ? (p.price >= 600 ? 0.1 : 0.5) : 1;
+  const shownPrice = p => p.per100 ? p.price / 10 : p.price;
+  const unitText = p => p.per100 ? "/100 г" : byWeight(p) ? "/кг" : "";
+  const priceText = p => rub(shownPrice(p)) + unitText(p);
 
   // ---------- корзина (переживает случайное закрытие) ----------
   let cart = {};
@@ -410,22 +499,92 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
     const alt = img.dataset.alt;
     if (alt) { img.dataset.alt = ""; img.src = alt; } else img.remove();
   };
-  function photo(p, cls = "") {
+  function photo(p, cls = "", noHit = false) {
     const i = Math.max(0, SECTIONS.indexOf(p.section)) % 7;
     // буква лежит под фото: если фото не загрузится, его просто убираем
     const inner = `<span class="mono" style="color:var(--s${i}i)">${esc(p.title.trim()[0] || "•")}</span>` +
       (p.photo ? `<img src="${esc(p.photo)}" data-alt="${esc(altPhoto(p.photo))}" alt="" loading="lazy" onerror="photoFailed(this)">` : "");
-    return `<div class="ph ${cls}" style="background:var(--s${i})">${inner}${cls ? "" : `<span class="unitbadge">${byWeight(p) ? "за 1 кг" : p.desc && /упак/.test(p.desc) ? "за упаковку" : "за 1 шт"}</span>`}</div>`;
+    const badge = p.cat === "gift" ? "корзина" : p.per100 ? "за 100 г" : byWeight(p) ? "за 1 кг" : p.desc && /упак/.test(p.desc) ? "за упаковку" : p.desc && /пачк/.test(p.desc) ? "за пачку" : "за 1 шт";
+    return `<div class="ph ${cls}" style="background:var(--s${i})">${inner}${cls ? "" : `<span class="unitbadge">${badge}</span>${p.hit && !noHit ? `<span class="hitmark">ХИТ</span>` : ""}`}</div>`;
   }
   function buyHTML(p) {
     const q = cart[p.code];
-    if (!q) return `<button class="add" type="button" data-inc="${p.code}" aria-label="Добавить ${esc(p.title)}">${rub(p.price)}${byWeight(p) ? "<small>/кг</small>" : ""}<span class="plus">+</span></button>`;
+    if (!q) return `<button class="add" type="button" data-inc="${p.code}" aria-label="Добавить ${esc(p.title)}">${rub(shownPrice(p))}${unitText(p) ? `<small>${unitText(p)}</small>` : ""}<span class="plus">+</span></button>`;
     return `<div class="step"><button type="button" data-dec="${p.code}" aria-label="Меньше">−</button><button class="q" type="button" data-qty="${p.code}" aria-label="Указать количество">${fmtQty(p, q)}</button><button type="button" data-inc="${p.code}" aria-label="Больше">+</button></div>`;
   }
-  const shortDesc = p => (p.desc && !/^Цена за/.test(p.desc)) ? p.desc : "";
-  const card = p => `<article class="card" data-card="${p.code}">${photo(p)}<div class="name">${esc(p.title)}</div>${shortDesc(p) ? `<div class="desc">${esc(shortDesc(p))}</div>` : ""}<div class="buy" data-buy="${p.code}">${buyHTML(p)}</div></article>`;
+  const shortDesc = p => (p.desc && !/^Цена за/.test(p.desc) && p.cat !== "gift") ? p.desc : "";
+  const card = (p, noHit = false) => `<article class="card" data-card="${p.code}">${photo(p, "", noHit === true)}<div class="name">${esc(p.title)}</div>${shortDesc(p) ? `<div class="desc">${esc(shortDesc(p))}</div>` : ""}<div class="buy" data-buy="${p.code}">${buyHTML(p)}</div></article>`;
 
-  let query = "";
+  let query = "", view = "home";
+  // ---------- подарочная корзина «Собери свою»: флажок живёт вместе с корзиной ----------
+  let gift = false;
+  try { gift = localStorage.getItem("gift") === "1"; } catch (e) {}
+  const saveGift = () => { try { localStorage.setItem("gift", gift ? "1" : "0"); } catch (e) {} };
+  const hits = () => { const h = ITEMS.filter(p => p.hit && p.cat !== "gift"); return h.length ? h : ITEMS.filter(p => p.cat !== "gift").slice(0, 8); };
+  const cats = () => CATS.filter(c => ITEMS.some(p => p.cat === c.key)).concat(ITEMS.some(p => p.cat === "other") ? [{ key: "other", name: "Другое" }] : []);
+  const catItems = key => ITEMS.filter(p => p.cat === key);
+  const coverOf = key => { const its = catItems(key).filter(p => p.photo); return (its.find(p => p.hit) || its[0] || {}).photo || ""; };
+  const lastOrder = () => { try { const o = JSON.parse(localStorage.getItem("lastOrder") || "null"); return o && Array.isArray(o.items) ? o.items.filter(([c]) => byCode[c]) : []; } catch (e) { return []; } };
+  const img = (src, alt = "") => src ? `<img src="${esc(src)}" data-alt="${esc(altPhoto(src))}" alt="${esc(alt)}" loading="lazy" onerror="photoFailed(this)">` : "";
+  const giftPhoto = () => PHOTOS.gift_basket || (byCode.gift_basket && byCode.gift_basket.photo) || "";
+
+  function renderHome() {
+    const D = S.first_order_discount, slots = (DATA.checkout.slots || []).map(s => s.label).join(" и ");
+    const banners = [
+      ITEMS.some(p => p.cat === "gift") || PHOTOS.gift_basket_custom ? `<button class="banner b0 has-img" type="button" data-view="gift"><b>Подарочные корзины</b><span>Готовая или соберите свою — от ${rub(GIFT_MIN)}. Соберём в день заказа</span><em>Выбрать →</em>${img(giftPhoto())}</button>` : "",
+      D ? `<div class="banner b1"><span class="big">−${Math.round(D * 100)}%</span><b>на первый заказ</b><span>Скидка посчитается сама при подтверждении суммы</span></div>` : "",
+      `<div class="banner b2"><b>Бесплатная доставка от ${rub(S.free_from)}</b><span>Привезём ${esc(slots)} · оплата у двери картой или по QR</span></div>`,
+    ].filter(Boolean).join("");
+    const recent = lastOrder();
+    const recentHTML = recent.length ? `<div class="block-h"><h2>Вы заказывали</h2></div><div class="recent">
+        <div class="names">${recent.slice(0, 6).map(([c]) => esc(byCode[c].title)).join(", ")}${recent.length > 6 ? ` и ещё ${recent.length - 6}` : ""}</div>
+        <button class="cta" type="button" data-repeat="1">Повторить заказ</button></div>` : "";
+    const tiles = cats().map(c => {
+      const n = catItems(c.key).length;
+      if (c.key === "gift") return `<button class="tile gift" type="button" data-view="gift"><b>🎁 Подарочные корзины</b><span>Готовая или собери свою</span>${img(giftPhoto())}</button>`;
+      return `<button class="tile" type="button" data-view="${c.key}"><b>${esc(c.name)}</b><span>${n} ${plural(n, "товар", "товара", "товаров")}</span>${img(coverOf(c.key))}</button>`;
+    }).join("");
+    const H = hits();
+    $("list").innerHTML = `<div class="banners" aria-label="Акции">${banners}</div>` + recentHTML +
+      `<div class="block-h"><h2>Каталог</h2></div><div class="tiles">${tiles}</div>` +
+      (H.length ? `<div class="block-h"><h2>Хиты недели</h2></div><div class="rowscroll">${H.map(card).join("")}</div>` : "") +
+      `<div class="block-h"><h2>Как заказать</h2></div><div class="howto">
+        <div><i>1</i><span>Выберите товары и время доставки</span></div>
+        <div><i>2</i><span>Продавец взвесит и пришлёт точную сумму</span></div>
+        <div><i>3</i><span>Привезём к двери, оплата при получении</span></div></div>
+      <p class="terms">Заказ от ${rub(S.min_order)} · доставка ${rub(S.delivery_fee)}, от ${rub(S.free_from)} — бесплатно · ${esc(C.zone)}</p>`;
+  }
+  function sectionsHTML(list) {
+    const secs = [...new Set(list.map(p => p.section))];
+    return secs.map(s => `<section class="section" id="sec${SECTIONS.indexOf(s)}">${secs.length > 1 ? `<h2>${esc(s)}</h2>` : ""}<div class="grid">${list.filter(p => p.section === s).map(card).join("")}</div></section>`).join("");
+  }
+  function renderCat(key) {
+    const list = catItems(key);
+    const secs = [...new Set(list.map(p => p.section))];
+    const head = `<div class="view-h"><button class="back" type="button" data-view="home">← Все категории</button><h1>${esc(catName(key))}</h1>` +
+      (key === "nuts" ? `<p>Цена за 100 г, как на ценниках в магазине. Взвесим столько, сколько закажете.</p>` : "") +
+      (secs.length > 1 ? `<nav class="subs-nav" aria-label="Подразделы">${secs.map(s => `<button type="button" data-sub="sec${SECTIONS.indexOf(s)}">${esc(s)}</button>`).join("")}</nav>` : "") + `</div>`;
+    $("list").innerHTML = head + sectionsHTML(list);
+  }
+  function renderGift() {
+    const ready = byCode.gift_basket;
+    const custom = `<article class="card giftcard"><div class="ph">${img(PHOTOS.gift_basket_custom || "photos/gift_basket_custom.jpg")}<span class="unitbadge">от ${rub(GIFT_MIN)}</span></div>
+      <div class="name">Собери свою корзину</div><div class="desc">Корзина и упаковка в подарок</div>
+      <div class="buy"><button class="gbtn ${gift ? "on" : ""}" type="button" data-gift="${gift ? "off" : "on"}">${gift ? "✓ Собираем" : "Собрать"}</button></div></article>`;
+    // в «Собери свою» можно положить что угодно: показываем весь каталог по категориям, без пометок «хит»
+    const fill = cats().filter(c => c.key !== "gift").map(c => {
+      const its = catItems(c.key);
+      return its.length ? `<section class="section"><h2>${esc(c.name)}</h2><div class="grid">${its.map(p => card(p, true)).join("")}</div></section>` : "";
+    }).join("");
+    $("list").innerHTML = `<div class="view-h"><button class="back" type="button" data-view="home">← Все категории</button><h1>Подарочные корзины</h1>
+        <p>Белая плетёная корзина, бумага и атласный бант. Соберём в день заказа и привезём.</p></div>
+      <div class="grid">${ready ? card(ready, true) : ""}${custom}</div>
+      <div class="giftinfo"><b>Как собрать свою</b>
+        <span>1. Нажмите «Собрать» — корзина на сайте станет подарочной.</span>
+        <span>2. Добавьте любые товары из каталога на сумму от ${rub(GIFT_MIN)}.</span>
+        <span>3. Оформите заказ — продавец красиво уложит всё в корзину. Корзина и упаковка — в подарок.</span></div>
+      ${fill ? `<div class="block-h"><h2>Что положить в корзину</h2></div>${fill}` : ""}`;
+  }
   function renderList() {
     const list = $("list");
     if (query.trim()) {
@@ -435,15 +594,23 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
         : `<div class="empty"><b>Ничего не нашли по «${query.replace(/</g, "&lt;")}»</b>Попробуйте короче, например «ябл». Или напишите в чат с ботом — продавец подскажет, что есть.</div>`;
       return;
     }
-    list.innerHTML = SECTIONS.map((s, i) => {
-      const ps = ITEMS.filter(p => p.section === s);
-      return `<section class="section" id="sec${i}"><h2>${esc(s)}</h2><div class="grid">${ps.map(card).join("")}</div></section>`;
-    }).join("");
-    if (io) list.querySelectorAll(".section[id]").forEach(el => io.observe(el));
+    if (view !== "home" && view !== "gift" && !catItems(view).length) view = "home";
+    if (view === "home") renderHome(); else if (view === "gift") renderGift(); else renderCat(view);
   }
   function renderChips() {
-    $("chips").innerHTML = SECTIONS.map((s, i) => `<button class="chip" type="button" data-sec="${i}" aria-pressed="false">${esc(s)}</button>`).join("");
+    const nav = [{ key: "home", name: "Главная" }, ...cats()];
+    $("chips").innerHTML = nav.map(c => `<button class="chip" type="button" data-view="${c.key}" aria-pressed="${c.key === view && !query}">${esc(c.key === "gift" ? "🎁 Подарки" : c.name)}</button>`).join("");
   }
+  function setView(key, push = true) {
+    view = key;
+    if (query) { query = ""; $("q").value = ""; $("qclear").hidden = true; }
+    renderChips(); renderList(); window.scrollTo(0, 0);
+    const chip = document.querySelector(`.chip[data-view="${key}"]`);
+    chip && chip.scrollIntoView({ inline: "center", block: "nearest" });
+    if (push) { try { history.pushState({ view: key }, "", location.href); } catch (e) {} }
+    syncBack();
+  }
+  window.addEventListener("popstate", e => { if (!orderView) setView((e.state && e.state.view) || "home", false); });
   function refresh(code) {
     if (code) document.querySelectorAll(`[data-buy="${code}"]`).forEach(el => el.innerHTML = buyHTML(byCode[code]));
     renderBar();
@@ -461,46 +628,62 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
     $("bar").hidden = n === 0;
     if (!n) return;
     $("bartotal").textContent = "≈ " + rub(t);
-    $("barnote").textContent = `${n} ${plural(n, "товар", "товара", "товаров")} · ${hint(t).text.toLowerCase()}`;
+    $("barnote").textContent = gift
+      ? `🎁 подарочная корзина · ${t < GIFT_MIN ? "ещё " + rub(GIFT_MIN - t) + " до " + rub(GIFT_MIN) : "можно оформлять"}`
+      : `${n} ${plural(n, "товар", "товара", "товаров")} · ${hint(t).text.toLowerCase()}`;
   }
   const plural = (n, a, b, c) => { const m = n % 10, h = n % 100; return m === 1 && h !== 11 ? a : m >= 2 && m <= 4 && (h < 12 || h > 14) ? b : c; };
 
   // ---------- шторки ----------
   let openSheet = null;
+  function syncBack() {
+    try { if (tg) (openSheet || (view !== "home" && !orderView)) ? tg.BackButton.show() : tg.BackButton.hide(); } catch (e) {}
+  }
   function show(id) {
     hideSheets(); openSheet = id; $(id).hidden = false; $("veil").hidden = false;
-    try { tg && tg.BackButton.show(); } catch (e) {}
+    syncBack();
   }
   function hideSheets() {
     ["cart", "qtysheet", "order", "done"].forEach(id => $(id).hidden = true); $("veil").hidden = true; openSheet = null;
-    try { tg && tg.BackButton.hide(); } catch (e) {}
+    syncBack();
   }
+  const goBack = () => openSheet ? hideSheets() : view !== "home" ? setView("home") : null;
 
+  // «Не забудьте»: хиты, которых ещё нет в корзине — в конце списка товаров
+  function upsellHTML() {
+    const more = hits().filter(p => !cart[p.code]).slice(0, 6);
+    return more.length ? `<div class="upsell"><b>Не забудьте</b><div class="row">${more.map(p => `<button type="button" data-inc="${p.code}"><b>${esc(p.title)}</b><span>${priceText(p)} · +</span></button>`).join("")}</div></div>` : "";
+  }
   function renderCart() {
     const codes = Object.keys(cart);
     if (!codes.length) { hideSheets(); return; }
-    $("lines").innerHTML = codes.map(c => {
+    $("lines").innerHTML = (gift ? `<div class="giftbar"><span>🎁 Соберём в подарочную корзину. Корзина и упаковка — в подарок</span><button type="button" data-gift="off">Убрать</button></div>` : "") + codes.map(c => {
       const p = byCode[c], q = cart[c];
       return `<div class="line">${photo(p, "mini")}<div><div class="t">${esc(p.title)}</div><div class="p">${priceText(p)} · ≈ ${rub(p.price * q)}</div></div><div data-buy="${c}">${buyHTML(p)}</div></div>`;
-    }).join("");
+    }).join("") + upsellHTML();
     const t = total(), h = hint(t), first = S.first_order_discount;
+    const goal = gift ? GIFT_MIN : t < S.min_order ? S.min_order : S.free_from;
+    const pct = Math.min(100, Math.round(t / goal * 100));
     $("sum").innerHTML =
       `<div class="tot"><span>Товары</span><span>≈ ${rub(t)}</span></div>` +
-      `<div class="note ${h.warn ? "warn" : ""}">${h.text}. Доставка ${rub(S.delivery_fee)}, от ${rub(S.free_from)} — бесплатно.</div>` +
-      `<div class="note">Фрукты на вес: точную сумму продавец напишет после взвешивания.${first ? ` На первый заказ скидка ${Math.round(first * 100)}%.` : ""}</div>` +
+      `<div class="prog" aria-hidden="true"><i style="width:${pct}%"></i></div>` +
+      (gift ? `<div class="note ${t < GIFT_MIN ? "warn" : ""}">${t < GIFT_MIN ? `Для подарочной корзины добавьте ещё ${rub(GIFT_MIN - t)}` : "Сумма для корзины набрана"}. Доставка бесплатная.</div>`
+            : `<div class="note ${h.warn ? "warn" : ""}">${h.text}. Доставка ${rub(S.delivery_fee)}, от ${rub(S.free_from)} — бесплатно.</div>`) +
+      `<div class="note">Фрукты и орехи на вес: точную сумму продавец напишет после взвешивания.${first ? ` На первый заказ скидка ${Math.round(first * 100)}%.` : ""}</div>` +
       `<div><button class="link" type="button" id="clearcart">Очистить корзину</button></div>`;
-    $("checkout").disabled = t < S.min_order;
-    $("checkout").textContent = t < S.min_order ? `Минимальный заказ ${rub(S.min_order)}` : "Оформить заказ →";
+    const need = gift ? Math.max(GIFT_MIN, S.min_order) : S.min_order;
+    $("checkout").disabled = t < need;
+    $("checkout").textContent = t < need ? (gift ? `Для корзины — ещё ${rub(need - t)}` : `Минимальный заказ ${rub(S.min_order)}`) : "Оформить заказ →";
   }
 
   let qtyCode = null;
   function openQty(code) {
     const p = byCode[code]; qtyCode = code;
     $("qtytitle").textContent = p.title;
-    $("qtyunit").textContent = byWeight(p) ? "кг" : "шт";
-    $("qtyinput").value = cart[code] ? String(cart[code]).replace(".", ",") : "";
-    const opts = byWeight(p) ? (p.price >= 600 ? [0.2, 0.3, 0.5, 1] : [0.5, 1, 1.5, 2, 3]) : [1, 2, 3, 5];
-    $("qtyquick").innerHTML = opts.map(v => `<button type="button" data-quick="${v}">${fmtQty(p, v)}</button>`).join("");
+    $("qtyunit").textContent = p.per100 ? "г" : byWeight(p) ? "кг" : "шт";
+    $("qtyinput").value = cart[code] ? (p.per100 ? String(Math.round(cart[code] * 1000)) : String(cart[code]).replace(".", ",")) : "";
+    const opts = p.per100 ? [0.1, 0.2, 0.3, 0.5, 1] : byWeight(p) ? (p.price >= 600 ? [0.2, 0.3, 0.5, 1] : [0.5, 1, 1.5, 2, 3]) : [1, 2, 3, 5];
+    $("qtyquick").innerHTML = opts.map(v => `<button type="button" data-quick="${p.per100 ? Math.round(v * 1000) : v}">${fmtQty(p, v)}</button>`).join("");
     show("qtysheet");
     setTimeout(() => $("qtyinput").focus(), 50);
   }
@@ -572,13 +755,13 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
     $("zone-note").hidden = !other;
     $("zone-note").textContent = `Пока возим только сюда: ${C.zone}. Можем собрать заказ к вашему приходу в магазин: ${C.shop_address} — напишите нам в чат.`;
     const t = total();
-    $("ordersum").innerHTML = `<div class="tot"><span>Товары</span><span>≈ ${rub(t)}</span></div>` +
+    $("ordersum").innerHTML = (gift ? `<div class="giftbar"><span>🎁 Соберём в подарочную корзину</span></div>` : "") + `<div class="tot"><span>Товары</span><span>≈ ${rub(t)}</span></div>` +
       `<div class="note">${t >= S.free_from ? "Доставка бесплатно" : `+ доставка ${rub(S.delivery_fee)}`} · точная сумма после взвешивания${S.first_order_discount ? ` · −${Math.round(S.first_order_discount * 100)}% на первый заказ` : ""}</div>`;
     $("placeorder").disabled = other;
     $("placeorder").textContent = `Заказать · ≈ ${rub(t)}`;
   }
   function openOrder() {
-    if (!Object.keys(cart).length || total() < S.min_order) return;
+    if (!Object.keys(cart).length || total() < (gift ? Math.max(GIFT_MIN, S.min_order) : S.min_order)) return;
     $("ordererr").hidden = true;
     document.querySelectorAll(".field.bad").forEach(f => f.classList.remove("bad"));
     $("f-name").hidden = viaBot() || !!VK;
@@ -629,11 +812,17 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
       phone: $("i-phone").value.trim(), substitution: form.substitution, payment: form.payment,
       promo: $("i-promo").value.trim(), source: form.source || "", note: $("i-note").value.trim(),
       comment: $("i-comment").value.trim() };
+    if (gift) {   // продавец увидит пометку в комментарии — и в Telegram, и во ВК, и в таблице заказов
+      order.gift = 1;
+      order.comment = "🎁 СОБРАТЬ В ПОДАРОЧНУЮ КОРЗИНУ (корзина и упаковка в подарок)" + (order.comment ? " · " + order.comment : "");
+    }
     const name = $("i-name").value.trim();
+    const remember = () => { try { localStorage.setItem("lastOrder", JSON.stringify({ at: Date.now(), items: Object.entries(cart) })); } catch (e) {} gift = false; saveGift(); };
     try { localStorage.setItem("orderform", JSON.stringify({ house: order.house, addr,
       phone: order.phone, substitution: order.substitution, payment: order.payment, name })); } catch (e) {}
     if (viaBot()) {
       const payload = JSON.stringify({ v: 2, items: Object.entries(cart), order });
+      remember();
       try { localStorage.removeItem("cart"); } catch (e) {}
       // Telegram закроет витрину, а бот сразу отправит заказ продавцу и пришлёт подтверждение
       if (tg && tg.sendData) tg.sendData(payload); else postEvent("web_app_data_send", { data: payload });
@@ -655,6 +844,7 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
       .then(res => {
         if (!res.ok) return fail(res.error || "Не получилось отправить заказ. Попробуйте ещё раз.");
         const t = total();
+        remember();
         cart = {}; save(); renderList(); renderBar();
         const viaVk = res.via === "vk";
         // заказ из обычного браузера: клиент сам выбирает, где получать сумму — в Telegram или ВК
@@ -695,10 +885,24 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
     if (t.dataset.dec) return dec(t.dataset.dec);
     if (t.dataset.qty) return openQty(t.dataset.qty);
     if (t.dataset.quick) { $("qtyinput").value = String(t.dataset.quick).replace(".", ","); return; }
-    if (t.dataset.sec !== undefined) {
-      if (query) { query = ""; $("q").value = ""; $("qclear").hidden = true; renderList(); }
-      const el = $("sec" + t.dataset.sec);
+    if (t.dataset.view) return setView(t.dataset.view);
+    if (t.dataset.sub) {
+      const el = $(t.dataset.sub);
       el && el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      return;
+    }
+    if (t.dataset.gift) {
+      gift = t.dataset.gift === "on"; saveGift(); haptic();
+      if (gift) toast(`🎁 Добавляйте товары от ${rub(GIFT_MIN)} — соберём их в подарочную корзину`);
+      if (view === "gift") renderGift();
+      renderBar(); if (!$("cart").hidden) renderCart();
+      return;
+    }
+    if (t.dataset.repeat) {
+      const items = lastOrder();
+      items.forEach(([c, q]) => { cart[c] = Math.min(100, Math.max(cart[c] || 0, +q || 0)); });
+      save(); renderList(); renderBar(); haptic();
+      toast(`Добавили в корзину ${items.length} ${plural(items.length, "товар", "товара", "товаров")} — проверьте количество`);
       return;
     }
     if (t.id === "barbtn") { renderCart(); return show("cart"); }
@@ -714,25 +918,19 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
     if (t.id === "clearcart") { cart = {}; save(); renderList(); renderBar(); hideSheets(); return; }
     if (t.id === "qclear") { query = ""; $("q").value = ""; t.hidden = true; renderList(); $("q").focus(); }
   });
-  $("q").addEventListener("input", e => { query = e.target.value; $("qclear").hidden = !query; renderList(); window.scrollTo(0, 0); });
+  $("q").addEventListener("input", e => { query = e.target.value; $("qclear").hidden = !query; renderList(); renderChips(); window.scrollTo(0, 0); });
   $("q").addEventListener("keydown", e => { if (e.key === "Enter") e.target.blur(); });
   $("qtyform").addEventListener("submit", e => {
     e.preventDefault();
     const p = byCode[qtyCode];
     let raw = $("qtyinput").value.trim().toLowerCase().replace(",", ".");
     let v = parseFloat(raw);
-    if (byWeight(p) && /г/.test(raw.replace("кг", "")) && v >= 50) v = v / 1000;
+    if (p.per100 && !/кг/.test(raw) && v >= 10) v = v / 1000;            // для орехов вводят граммы
+    else if (byWeight(p) && /г/.test(raw.replace("кг", "")) && v >= 50) v = v / 1000;
     if (!(v >= 0) || v > 100) { $("qtyinput").focus(); return; }
     setQty(qtyCode, v); hideSheets();
   });
 
-  // разделы подсвечиваются при прокрутке
-  const io = "IntersectionObserver" in window ? new IntersectionObserver(entries => {
-    for (const en of entries) if (en.isIntersecting) {
-      const i = en.target.id.slice(3);
-      document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c.dataset.sec === i ? "true" : "false"));
-    }
-  }, { rootMargin: "-150px 0px -60% 0px" }) : null;
 
   // ---------- свежие цены из Google Таблицы (в фоне, страница уже показана) ----------
   function parseCSV(text) {
@@ -760,8 +958,11 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
     for (const r of rows.slice(1)) {
       const code = cell(r, "Код"), title = cell(r, "Товар"), digits = cell(r, "Цена").replace(/\D/g, "");
       if (!code || !title || !digits || !YES.has(cell(r, "Есть").toLowerCase())) continue;
-      out.push({ code, title, desc: cell(r, "Описание"), price: +digits,
-        unit: cell(r, "Единица").toLowerCase().startsWith("шт") ? "шт" : "кг",
+      const u = cell(r, "Единица").toLowerCase().replace(/\s/g, "");
+      const per100 = ["100г", "100гр", "за100г"].includes(u);
+      out.push({ code, title, desc: cell(r, "Описание"), price: per100 ? +digits * 10 : +digits, per100,
+        hit: YES.has(cell(r, "Хит").toLowerCase()),
+        unit: u.startsWith("шт") ? "шт" : "кг",
         section: cell(r, "Раздел") || "Другое", photo: cell(r, "Фото"),
         order: /^\d+$/.test(cell(r, "Порядок")) ? +cell(r, "Порядок") : 999 });
     }
@@ -829,6 +1030,7 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
     orderView = parseOrderHash();
     document.querySelector(".top").hidden = !!orderView;
     if (orderView) { $("bar").hidden = true; hideSheets(); renderOrderView(); window.scrollTo(0, 0); return; }
+    try { history.replaceState({ view }, "", location.href); } catch (e) {}
     renderChips(); renderList(); renderBar();
   }
   document.addEventListener("click", e => {
