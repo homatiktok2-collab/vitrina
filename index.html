@@ -572,8 +572,11 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
       <div class="name">Собери свою корзину</div><div class="desc">Корзина и упаковка в подарок</div>
       <div class="buy"><button class="gbtn ${gift ? "on" : ""}" type="button" data-gift="${gift ? "off" : "on"}">${gift ? "✓ Собираем" : "Собрать"}</button></div></article>`;
     // в «Собери свою» можно положить что угодно: показываем весь каталог по категориям, без пометок «хит»
-    const fill = cats().filter(c => c.key !== "gift").map(c => {
-      const its = catItems(c.key);
+    const top = hits();   // сверху — хиты с пометкой, ниже — весь остальной каталог без повторов
+    const topSet = new Set(top.map(p => p.code));
+    const fill = (top.length ? `<section class="section"><h2>Хиты</h2><div class="grid">${top.map(p => card(p)).join("")}</div></section>` : "") +
+      cats().filter(c => c.key !== "gift").map(c => {
+      const its = catItems(c.key).filter(p => !topSet.has(p.code));
       return its.length ? `<section class="section"><h2>${esc(c.name)}</h2><div class="grid">${its.map(p => card(p, true)).join("")}</div></section>` : "";
     }).join("");
     $("list").innerHTML = `<div class="view-h"><button class="back" type="button" data-view="home">← Все категории</button><h1>Подарочные корзины</h1>
