@@ -30,6 +30,9 @@
     trackLinks: false,
     webvisor: false
   });
+  window.trackStorefrontGoal = goal => {
+    try { window.ym(counterId, "reachGoal", goal); } catch (error) { /* Analytics must not interrupt checkout. */ }
+  };
 })();
 </script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -510,10 +513,11 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
   const save = () => { try { localStorage.setItem("cart", JSON.stringify(cart)); } catch (e) {} };
   const total = () => Object.entries(cart).reduce((s, [c, q]) => s + byCode[c].price * q, 0);
   function setQty(code, q) {
-    const p = byCode[code];
+    const p = byCode[code], wasInCart = cart[code] > 0;
     q = byWeight(p) ? Math.round(q * 100) / 100 : Math.round(q);
     if (q <= 0.001) delete cart[code]; else cart[code] = Math.min(q, 100);
     save(); haptic(); refresh(code);
+    if (!wasInCart && cart[code] > 0) window.trackStorefrontGoal?.("add_to_cart");
   }
   const inc = code => setQty(code, (cart[code] || 0) ? cart[code] + stepOf(byCode[code]) : first(byCode[code]));
   const dec = code => {
@@ -1052,6 +1056,7 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
       .then(r => r.json())
       .then(res => {
         if (!res.ok) return fail(res.error || "Не получилось отправить заказ. Попробуйте ещё раз.");
+        window.trackStorefrontGoal?.("order_submitted");
         const t = total();
         remember();
         cart = {}; save(); renderList(); renderBar();
@@ -1109,8 +1114,10 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
     }
     if (t.dataset.repeat) {
       const items = lastOrder();
+      const addsNewItem = items.some(([c, q]) => !(cart[c] > 0) && q > 0);
       items.forEach(([c, q]) => { cart[c] = Math.min(100, Math.max(cart[c] || 0, +q || 0)); });
       save(); renderList(); renderBar(); haptic();
+      if (addsNewItem) window.trackStorefrontGoal?.("add_to_cart");
       toast(`Добавили в корзину ${items.length} ${plural(items.length, "товар", "товара", "товаров")} — проверьте количество`);
       return;
     }
