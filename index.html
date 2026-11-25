@@ -248,7 +248,7 @@ main { padding-block: 6px 120px; }
 .banners { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; padding-block: 12px 4px; scrollbar-width: none; }
 .banners > * { flex: 0 0 84%; }
 .banners::-webkit-scrollbar { display: none; }
-@media (min-width: 620px) { .banners > * { flex-basis: calc((100% - 20px) / 3); } }
+@media (min-width: 620px) { .banners > * { flex: 1 1 0; min-width: 0; } }
 .banner { scroll-snap-align: start; position: relative; min-height: 132px; border: 0; border-radius: 20px; padding: 16px 16px 16px 18px; text-align: left; display: grid; align-content: space-between; gap: 10px; overflow: hidden; color: var(--fg); }
 .banner b { font-size: 19px; font-weight: 800; line-height: 1.15; letter-spacing: -.01em; max-width: 14ch; position: relative; z-index: 1; }
 .banner span { font-size: 13px; color: var(--muted); max-width: 24ch; position: relative; z-index: 1; }
@@ -258,7 +258,7 @@ main { padding-block: 6px 120px; }
 .banner img, .tile img, .giftcard .ph img { mix-blend-mode: multiply; }
 :root[data-theme="dark"] .banner img, :root[data-theme="dark"] .tile img, :root[data-theme="dark"] .giftcard .ph img { mix-blend-mode: normal; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .banner img, :root:not([data-theme="light"]) .tile img, :root:not([data-theme="light"]) .giftcard .ph img { mix-blend-mode: normal; } }
-.banner.b0 { background: var(--s1); } .banner.b1 { background: var(--s2); } .banner.b2 { background: var(--s0); }
+.banner.b0 { background: var(--s1); } .banner.b1 { background: var(--s2); }
 .banner .big { font-size: 40px; font-weight: 800; letter-spacing: -.03em; color: var(--accent); line-height: 1; }
 .block-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 22px 0 12px; }
 .block-h h2 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -.01em; }
@@ -277,11 +277,18 @@ main { padding-block: 6px 120px; }
 .rowscroll::-webkit-scrollbar { display: none; }
 .rowscroll .card { scroll-snap-align: start; }
 @media (min-width: 620px) { .rowscroll > .card { flex-basis: 23%; } }
-.howto { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.howto div { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 12px; display: grid; gap: 4px; align-content: start; min-width: 0; }
-.howto i { font-style: normal; font-weight: 800; color: var(--accent); font-size: 18px; }
-.howto span { font-size: 13px; line-height: 1.3; }
-.terms { margin: 10px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.delivery-intro { margin: 8px 0 0; padding: 14px; border-radius: 18px; background: var(--s0); }
+.delivery-heading { display: flex; align-items: center; gap: 10px; }
+.delivery-icon { flex: 0 0 36px; display: grid; place-items: center; height: 36px; border-radius: 12px; background: var(--surface); }
+.delivery-heading h2 { margin: 0; font-size: 17px; font-weight: 800; line-height: 1.2; }
+.delivery-heading p, .delivery-details p { margin: 3px 0 0; color: var(--fg); font-size: 13px; }
+.delivery-steps { margin-top: 10px; padding-top: 9px; border-top: 1px solid color-mix(in srgb, var(--s0i) 30%, transparent); }
+.delivery-steps h3 { margin: 0; font-size: 14px; }
+.delivery-steps ol { margin: 4px 0 0; padding-left: 20px; font-size: 14px; }
+.delivery-steps li + li { margin-top: 2px; }
+.delivery-details { margin-top: 1px; }
+.delivery-details summary { min-height: 44px; align-content: center; font-size: 14px; font-weight: 700; cursor: pointer; }
+.delivery-details p + p { margin-top: 5px; }
 .hitmark { position: absolute; left: 8px; top: 8px; background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 2px 8px; font-size: 11px; font-weight: 700; letter-spacing: .02em; }
 .recent { display: grid; gap: 10px; padding: 14px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); }
 .recent .names { color: var(--muted); font-size: 14px; }
@@ -565,11 +572,27 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
   const giftPhoto = () => PHOTOS.gift_basket || (byCode.gift_basket && byCode.gift_basket.photo) || "";
 
   function renderHome() {
-    const D = S.first_order_discount, slots = (DATA.checkout.slots || []).map(s => s.label).join(" и ");
+    const D = S.first_order_discount, slots = (C.slots || []).map(s => s.label).join(" и ");
+    const freeDeliveryMinimum = S.delivery_fee ? S.free_from : S.min_order;
+    const delivery = `<section class="delivery-intro" aria-labelledby="delivery-heading">
+      <div class="delivery-heading"><span class="delivery-icon" aria-hidden="true">🚚</span><div>
+        <h2 id="delivery-heading">Бесплатная доставка от ${rub(freeDeliveryMinimum)}</h2>
+        <p>Парковый и соседние улицы</p>
+      </div></div>
+      <div class="delivery-steps"><h3>Как заказать</h3><ol>
+        <li>Добавьте товары в корзину.</li>
+        <li>Укажите адрес и выберите время.</li>
+        <li>Оплатите у двери картой или по QR.</li>
+      </ol></div>
+      <details class="delivery-details"><summary>Зона и время доставки</summary>
+        <p>${esc(C.zone)}. Точный адрес проверяется при оформлении.</p>
+        ${slots ? `<p>Интервалы доставки: ${esc(slots)}.</p>` : ""}
+        ${S.delivery_fee ? `<p>Минимальный заказ ${rub(S.min_order)}. Доставка до ${rub(S.free_from)} стоит ${rub(S.delivery_fee)}.</p>` : ""}
+      </details>
+    </section>`;
     const banners = [
-      ITEMS.some(p => p.cat === "gift") || PHOTOS.gift_basket_custom ? `<button class="banner b0 has-img" type="button" data-view="gift"><b>Подарочные корзины</b><span>Готовая или соберите свою — от ${rub(GIFT_MIN)}. Соберём в день заказа</span><em>Выбрать →</em>${img(giftPhoto())}</button>` : "",
+      ITEMS.some(p => p.cat === "gift") || PHOTOS.gift_basket_custom ? `<button class="banner b0 has-img" type="button" data-view="gift"><b>Подарочные корзины</b><span>Выберите готовую или соберите свою. Соберём в день заказа</span><em>Выбрать →</em>${img(giftPhoto())}</button>` : "",
       D ? `<div class="banner b1"><span class="big">−${Math.round(D * 100)}%</span><b>на первый заказ</b><span>Скидка посчитается сама при подтверждении суммы</span></div>` : "",
-      `<div class="banner b2"><b>${S.delivery_fee ? `Бесплатная доставка от ${rub(S.free_from)}` : "Бесплатная доставка"}</b><span>${S.delivery_fee ? "" : `Заказ от ${rub(S.min_order)} · `}Привезём ${esc(slots)} · оплата у двери картой или по QR</span></div>`,
     ].filter(Boolean).join("");
     const recent = lastOrder();
     const recentHTML = recent.length ? `<div class="block-h"><h2>Вы заказывали</h2></div><div class="recent">
@@ -581,14 +604,10 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
       return `<button class="tile" type="button" data-view="${c.key}"><b>${esc(c.name)}</b><span>${n} ${plural(n, "товар", "товара", "товаров")}</span>${img(coverOf(c.key))}</button>`;
     }).join("");
     const H = hits();
-    $("list").innerHTML = `<div class="banners" aria-label="Акции">${banners}</div>` + recentHTML +
+    $("list").innerHTML = delivery +
+      (banners ? `<div class="banners" aria-label="Акции">${banners}</div>` : "") + recentHTML +
       `<div class="block-h"><h2>Каталог</h2></div><div class="tiles">${tiles}</div>` +
-      (H.length ? `<div class="block-h"><h2>Хиты недели</h2></div><div class="rowscroll">${H.map(card).join("")}</div>` : "") +
-      `<div class="block-h"><h2>Как заказать</h2></div><div class="howto">
-        <div><i>1</i><span>Выберите товары и время доставки</span></div>
-        <div><i>2</i><span>Продавец взвесит и пришлёт точную сумму</span></div>
-        <div><i>3</i><span>Привезём к двери, оплата при получении</span></div></div>
-      <p class="terms">Заказ от ${rub(S.min_order)} · ${S.delivery_fee ? `доставка ${rub(S.delivery_fee)}, от ${rub(S.free_from)} — бесплатно` : "доставка бесплатная"} · ${esc(C.zone)}</p>`;
+      (H.length ? `<div class="block-h"><h2>Хиты недели</h2></div><div class="rowscroll">${H.map(card).join("")}</div>` : "");
   }
   function sectionsHTML(list) {
     const secs = [...new Set(list.map(p => p.section))];
