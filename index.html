@@ -289,6 +289,9 @@ main { padding-block: 6px 120px; }
 .delivery-details { margin-top: 1px; }
 .delivery-details summary { min-height: 44px; align-content: center; font-size: 14px; font-weight: 700; cursor: pointer; }
 .delivery-details p + p { margin-top: 5px; }
+.delivery-map { height: clamp(240px, 48vw, 320px); margin-top: 10px; border-radius: 12px; overflow: hidden; background: var(--surface); z-index: 0; }
+.delivery-map-shell .delivery-map-status { margin-top: 8px; }
+.delivery-map-status:empty { display: none; }
 .hitmark { position: absolute; left: 8px; top: 8px; background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 2px 8px; font-size: 11px; font-weight: 700; letter-spacing: .02em; }
 .recent { display: grid; gap: 10px; padding: 14px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); }
 .recent .names { color: var(--muted); font-size: 14px; }
@@ -588,6 +591,7 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
         <p>${esc(C.zone)}. Точный адрес проверяется при оформлении.</p>
         ${slots ? `<p>Интервалы доставки: ${esc(slots)}.</p>` : ""}
         ${S.delivery_fee ? `<p>Минимальный заказ ${rub(S.min_order)}. Доставка до ${rub(S.free_from)} стоит ${rub(S.delivery_fee)}.</p>` : ""}
+        ${POLY.length >= 3 ? `<div class="delivery-map-shell"><div class="delivery-map" role="region" aria-label="Карта зоны доставки" hidden></div><p class="delivery-map-status" role="status"></p></div>` : ""}
       </details>
     </section>`;
     const banners = [
@@ -644,6 +648,7 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
       ${fill ? `<div class="block-h"><h2>Что положить в корзину</h2></div>${fill}` : ""}`;
   }
   function renderList() {
+    removeDeliveryMap();
     const list = $("list");
     if (query.trim()) {
       const found = search(query);
@@ -770,6 +775,74 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
   }
   // адрес: подсказки DaData (точка дома проверяется по границе зоны), без них — по списку улиц
   const STREETS = C.streets || [], POLY = C.zone_poly || [];
+  let deliveryMap = null, deliveryMapAssets;
+  function loadDeliveryMapAssets() {
+    if (deliveryMapAssets) return deliveryMapAssets;
+    const base = "https://unpkg.com/leaflet@1.9.4/dist/";
+    const style = document.createElement("link"), script = document.createElement("script");
+    style.rel = "stylesheet";
+    style.href = base + "leaflet.css";
+    style.integrity = "sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=";
+    script.src = base + "leaflet.js";
+    script.integrity = "sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=";
+    const load = element => new Promise((resolve, reject) => {
+      element.crossOrigin = "anonymous";
+      element.onload = resolve;
+      element.onerror = reject;
+      document.head.appendChild(element);
+    });
+    deliveryMapAssets = Promise.all([load(style), load(script)]).then(() => window.L).catch(error => {
+      style.remove();
+      script.remove();
+      deliveryMapAssets = null;
+      throw error;
+    });
+    return deliveryMapAssets;
+  }
+  function removeDeliveryMap() {
+    if (!deliveryMap) return;
+    deliveryMap.remove();
+    deliveryMap = null;
+  }
+  $("list").addEventListener("toggle", async event => {
+    const details = event.target;
+    if (!details.matches(".delivery-details") || !details.open) return;
+    const container = details.querySelector(".delivery-map");
+    if (!container) return;
+    if (deliveryMap) {
+      deliveryMap.invalidateSize({ pan: false });
+      return;
+    }
+    if (container.dataset.loading) return;
+    const status = details.querySelector(".delivery-map-status");
+    container.dataset.loading = "1";
+    status.textContent = "Загружаем карту…";
+    try {
+      const L = await loadDeliveryMapAssets();
+      if (!details.isConnected || !details.open) return;
+      container.hidden = false;
+      deliveryMap = L.map(container, { scrollWheelZoom: false });
+      const zone = L.polygon(POLY, { color: "#21643b", fillColor: "#50aa67", fillOpacity: 0.23, weight: 3, interactive: false }).addTo(deliveryMap);
+      deliveryMap.fitBounds(zone.getBounds(), { padding: [18, 18], maxZoom: 16 });
+      status.textContent = "Зелёным выделена зона доставки.";
+      const tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      });
+      let tileLoaded = false;
+      tiles.on("tileload", () => { tileLoaded = true; });
+      tiles.once("load", () => {
+        if (!tileLoaded) status.textContent = "Улицы на карте не загрузились. Точный адрес можно проверить при оформлении.";
+      });
+      tiles.addTo(deliveryMap);
+    } catch (error) {
+      removeDeliveryMap();
+      container.hidden = true;
+      status.textContent = "Карта не загрузилась. Сверните и снова откройте этот блок или проверьте адрес при оформлении.";
+    } finally {
+      delete container.dataset.loading;
+    }
+  }, true);
   let picked = null;   // {house: "Строителей, 34", inZone: true} — выбранная подсказка
   function inPoly(lat, lon) {
     let inside = false;
@@ -1164,7 +1237,7 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
   function route() {
     orderView = parseOrderHash();
     document.querySelector(".top").hidden = !!orderView;
-    if (orderView) { $("bar").hidden = true; hideSheets(); renderOrderView(); window.scrollTo(0, 0); return; }
+    if (orderView) { removeDeliveryMap(); $("bar").hidden = true; hideSheets(); renderOrderView(); window.scrollTo(0, 0); return; }
     try { history.replaceState({ view }, "", location.href); } catch (e) {}
     renderChips(); renderList(); renderBar();
   }
