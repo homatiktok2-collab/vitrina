@@ -822,6 +822,7 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
       if (!details.isConnected || !details.open) return;
       container.hidden = false;
       deliveryMap = L.map(container, { scrollWheelZoom: false });
+      deliveryMap.attributionControl.setPrefix(false);
       const zone = L.polygon(POLY, { color: "#21643b", fillColor: "#50aa67", fillOpacity: 0.23, weight: 3, interactive: false }).addTo(deliveryMap);
       deliveryMap.fitBounds(zone.getBounds(), { padding: [18, 18], maxZoom: 16 });
       status.textContent = "Зелёным выделена зона доставки.";
