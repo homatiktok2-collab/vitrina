@@ -7,6 +7,31 @@
 <script async src="https://telegram.org/js/telegram-web-app.js" onload="window.__tgReady && window.__tgReady()"></script>
 
 <title>Витрина «Фрукты ягоды»</title>
+<script>
+(() => {
+  const page = new URL(window.location.href);
+  if (page.origin !== "https://homatiktok2-collab.github.io" ||
+      !page.pathname.startsWith("/vitrina/")) return;
+  // Do not load analytics on signed links from the order bots.
+  if (page.searchParams.has("vk") || page.searchParams.has("s") ||
+      new URLSearchParams(page.hash.slice(1)).has("tgWebAppData")) return;
+
+  const counterId = 114668263;
+  window.ym = window.ym || function () {
+    (window.ym.a = window.ym.a || []).push(arguments);
+  };
+  window.ym.l = Date.now();
+  const tag = document.createElement("script");
+  tag.async = true;
+  tag.src = "https://mc.yandex.ru/metrika/tag.js?id=" + counterId;
+  document.head.appendChild(tag);
+  window.ym(counterId, "init", {
+    clickmap: false,
+    trackLinks: false,
+    webvisor: false
+  });
+})();
+</script>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
