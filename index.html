@@ -565,7 +565,8 @@ a.cta{display:flex;align-items:center;justify-content:center;text-decoration:non
   const shortDesc = p => (p.desc && !/^Цена за/.test(p.desc) && p.cat !== "gift") ? p.desc : "";
   const card = (p, noHit = false) => `<article class="card" data-card="${p.code}">${photo(p, "", noHit === true)}<div class="name">${esc(p.title)}</div>${shortDesc(p) ? `<div class="desc">${esc(shortDesc(p))}</div>` : ""}<div class="buy" data-buy="${p.code}">${buyHTML(p)}</div></article>`;
 
-  let query = "", view = "home";
+  const initialView = new URLSearchParams(location.search).get("view") === "gift" ? "gift" : "home";
+  let query = "", view = initialView;
   // ---------- подарочная корзина «Собери свою»: флажок живёт вместе с корзиной ----------
   let gift = false;
   try { gift = localStorage.getItem("gift") === "1"; } catch (e) {}
